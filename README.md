@@ -1,5 +1,5 @@
 # The Emotions of the US Election and Insurrection
-By Adya Danadita, Lynnette Ng and Kevin Chen
+By Adya Danaditya, Lynnette Ng and Kevin Chen
 
 andrew ids: adanadit, huixiann, weichieh
 
@@ -32,7 +32,7 @@ The data can be accessed from [Google Drive](https://drive.google.com/drive/fold
 
 ## Applying Machine Learning 
 We look to apply machine learning to the dataset by further annotating the data with emotions.
-We first train an emotion classifier on a tweet dataset that was already annotated. This is the [SemEval-2018 Task 1: Affect in Tweets](https://competitions.codalab.org/competitions/17751). We create a classifier using a BiLSTM and a Convolutional Neural Network. Our classifier performs with 74.8% accuracy. Then we apply this classifier to annotate each of the text with a probability of each of the following emotions: disgust, anger, fear, joy and sadness.
+We first train an emotion classifier on a tweet dataset that was already annotated. This is the [SemEval-2018 Task 1: Affect in Tweets](https://competitions.codalab.org/competitions/17751) dataset. We create a classifier using a BiLSTM and a Convolutional Neural Network. Our classifier performs with 74.8% accuracy. Then we apply this classifier to annotate each of the text with a probability of each of the following emotions: disgust, anger, fear, joy and sadness.
 
 We further annotate the data with sentiments and psycholinguistic cues, which was done using the Linguistic Inquiry and Word Count engine. 
 This engine returns normalized probabilities of each item, eg. positive sentiment, negative sentiment, expression of family. 
