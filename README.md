@@ -1,5 +1,5 @@
 # The Emotions of the US Election and Insurrection
-By Adya Danadita, Lynnette Ng and Kelvin Chen
+By Adya Danadita, Lynnette Ng and Kevin Chen
 
 andrew ids: adanadit, huixiann, weichieh
 
