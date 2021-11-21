@@ -28,6 +28,8 @@ Twitter data was collected using the Twitter V1 API. Facebook data was collected
 
 The list of hashtags used in the collection includes: #corruptelection, #deadvoters, #deceasedvoters, #dominionvotingsystems, #electionfraud, #electionintegrity, #fakeelection, #fakevotes, #fraudulentelection, #legalvotesonly, #legitimatevotesonly, #massivecorruption, #riggedelection, #stolenelection, #trumpismypresident, #voterfraud.
 
+After this, we also further rehydrate the Twitter data using the Python Twarc library to obtain the full tweets with geolocation information.
+
 The data can be accessed from [Google Drive](https://drive.google.com/drive/folders/1FPgvlw2DOEcz3gKHHd0EL0hLV8cmkaCt?usp=sharing)
 
 ## Applying Machine Learning 
