@@ -50,3 +50,7 @@ We will attempt to tell a compelling story about the differences in emotions acr
 To give this contrast, we will divide the page into two for the user to discern the change of emotions before and after the events.
 We will present data summaries and general emotion and sentiment summary by histogram and multiple metric views.
 To present data regarding the states, we will use a map to show geography. We will overlay translucent bubbles of different colours to represent the different emotions.
+
+# Exploratory Data Analysis
+Before showing the interactive visualization, we did a round of exploratory data analysis to get a sense of the data. The EDA for the election part of the data can be seen [here](Election_EDA.ipynb), meanwhile the EDA for the insurrection part of the data can be seen [here](insurrection_exploration.ipynb)
+
