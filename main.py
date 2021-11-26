@@ -4,6 +4,8 @@ import pandas as pd
 import plotly.express
 import matplotlib.pyplot as plt
 from plotly import graph_objs as go
+from wordcloud import WordCloud, STOPWORDS
+import re
 
 st.set_page_config(page_title="Voter Fraud", page_icon=None, layout='centered', initial_sidebar_state='expanded', menu_items=None)
 
@@ -156,8 +158,6 @@ if 'social_media' not in st.session_state:
 
 # Map 
 
-# Bar chart 
-
 # Slider bar
 df_all_before = pd.concat([df_twitter_before, df_facebook_before, df_reddit_before])
 df_all_after = pd.concat([df_twitter_after, df_facebook_after, df_reddit_after])
@@ -167,6 +167,25 @@ max_date = max(df_all_after[DATE_COLUMN]).date()
 date_format = 'YYYY-MM-DD'
 
 date_filter = st.slider('Select date range', min_value=min_date, max_value=max_date, value=(min_date, max_date), format=date_format)
+
+# Top keywords
+stopwords = set(STOPWORDS)
+stopwords.update(["https", "t", "co", "let", "will", "s", "use", "take", "used", "people", "said",
+            "say", "wasnt", "go", "well", "thing", "amp", "put", "&", "even", "Yet"])
+word_cleaning_before = ' '.join(text for text in df_all_before['text'])
+word_cleaning_before = re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",word_cleaning_before)
+
+word_cleaning_after = ' '.join(text for text in df_all_after['text'])
+word_cleaning_after = re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",word_cleaning_after)
+
+# Need to transform this into bar chart 
+wordcloud_before = WordCloud(stopwords=stopwords, max_words=100, width=800, height=400).generate(word_cleaning_before)
+topwords_before_dict = wordcloud_before.words_
+topwords_before_dict = sorted(topwords_before_dict, key=topwords_before_dict.get, reverse=True)[:10]
+
+wordcloud_after = WordCloud(stopwords=stopwords, max_words=100, width=800, height=400).generate(word_cleaning_after)
+topwords_after_dict = wordcloud_after.words_
+topwords_after_dict = sorted(topwords_after_dict, key=topwords_after_dict.get, reverse=True)[:10]
 
 # Before after bubbles
 
