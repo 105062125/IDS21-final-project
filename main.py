@@ -7,7 +7,7 @@ from plotly import graph_objs as go
 from wordcloud import WordCloud, STOPWORDS
 import re
 
-st.set_page_config(page_title="Voter Fraud", page_icon=None, layout='centered', initial_sidebar_state='expanded', menu_items=None)
+st.set_page_config(page_title="US Election and Insurrection", page_icon=None, layout='wide', initial_sidebar_state='expanded', menu_items=None)
 
 st.title('The United States Election and Insurrection')
 
@@ -123,6 +123,8 @@ if election_btn:
     df_reddit_after = df_reddit_after_election
     df_twitter_after = df_twitter_after_election
     df_twitter_before = df_twitter_before_election
+
+
 elif insurrection_btn:
     SELECTION = 'insurrection'
     if 'selection' not in st.session_state:
@@ -145,7 +147,16 @@ stat_col1.metric(label = "Facebook", value=f"{facebook_total:,}")
 stat_col2.metric(label = "Reddit", value=f"{reddit_total:,}")
 stat_col3.metric(label = "Twitter", value=f"{twitter_total:,}")
 
-stat_breakdown_col1, stat_breakdown_col2, stat_breakdown_col3 = st.columns(3)
+stat_breakdown_col1, stat_breakdown_col2, stat_breakdown_col3, stat_breakdown_col4, stat_breakdown_col5, stat_breakdown_col6 = st.columns(6)
+stat_breakdown_col1.metric(label="BEFORE", value=f"{len(df_facebook_before):,}")
+stat_breakdown_col2.metric(label="AFTER", value=f"{len(df_facebook_after):,}")
+
+stat_breakdown_col3.metric(label="BEFORE", value=f"{len(df_reddit_before):,}")
+stat_breakdown_col4.metric(label="AFTER", value=f"{len(df_reddit_after):,}")
+
+stat_breakdown_col5.metric(label="BEFORE", value=f"{len(df_twitter_before):,}")
+stat_breakdown_col6.metric(label="AFTER", value=f"{len(df_twitter_after):,}")
+
 
 # Line chart 
 
@@ -167,6 +178,25 @@ max_date = max(df_all_after[DATE_COLUMN]).date()
 date_format = 'YYYY-MM-DD'
 
 date_filter = st.slider('Select date range', min_value=min_date, max_value=max_date, value=(min_date, max_date), format=date_format)
+
+before_fb_mask = (df_facebook_before[DATE_COLUMN].dt.date >= date_filter[0]) & (df_facebook_before[DATE_COLUMN].dt.date <= date_filter[1])
+df_facebook_before = df_facebook_before.loc[before_fb_mask]
+after_fb_mask = (df_facebook_after[DATE_COLUMN].dt.date >= date_filter[0]) & (df_facebook_after[DATE_COLUMN].dt.date <= date_filter[1])
+df_facebook_after = df_facebook_after.loc[after_fb_mask]
+
+before_reddit_mask = (df_reddit_before[DATE_COLUMN].dt.date >= date_filter[0]) & (df_reddit_before[DATE_COLUMN].dt.date <= date_filter[1])
+df_reddit_before = df_reddit_before.loc[before_reddit_mask]
+after_reddit_mask = (df_reddit_after[DATE_COLUMN].dt.date >= date_filter[0]) & (df_reddit_after[DATE_COLUMN].dt.date <= date_filter[1])
+df_reddit_after = df_reddit_after.loc[after_reddit_mask]
+
+before_twitter_mask = (df_twitter_before[DATE_COLUMN].dt.date >= date_filter[0]) & (df_twitter_before[DATE_COLUMN].dt.date <= date_filter[1])
+df_twitter_before = df_twitter_before.loc[before_twitter_mask]
+after_twitter_mask = (df_twitter_after[DATE_COLUMN].dt.date >= date_filter[0]) & (df_twitter_after[DATE_COLUMN].dt.date <= date_filter[1])
+df_twitter_after = df_twitter_after.loc[after_twitter_mask]
+
+df_all_before = pd.concat([df_twitter_before, df_facebook_before, df_reddit_before])
+df_all_after = pd.concat([df_twitter_after, df_facebook_after, df_reddit_after])
+df_all = pd.concat([df_all_before, df_all_after])
 
 # Top keywords
 stopwords = set(STOPWORDS)
@@ -208,6 +238,14 @@ emotion_1, emotion_space, emotion_2 = st.columns((2, 0.1, 1))
 # Boxplot
 with emotion_1:
     st.write('Box plot of ' + emotion_selector + ' over time ')
+
+    emotion_col = 'emotion.' + emotion_selector
+    emotion_col = emotion_col.lower()
+    fig, ax = plt.subplots(figsize=(5,5))
+    boxplot_emotion = df_all.boxplot(column=emotion_col, by=DATE_COLUMN, return_type='axes', showfliers=False, rot=90)
+    plt.tight_layout(pad=0)
+    st.pyplot(fig)
+
 
 # Sample posts
 with emotion_2:
