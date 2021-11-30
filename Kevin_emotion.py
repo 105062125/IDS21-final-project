@@ -166,119 +166,119 @@ choose=st.radio("Social media filter",("Facebook","Reddit","Twitter"))
 date_format = 'YYYY-MM-DD'
 
 
-# geo_after_df = pd.read_csv('./data/after_with_places_ext.csv')
-# geo_before_df = pd.read_csv('./data/before_with_places_ext.csv')
+geo_after_df = pd.read_csv('./data/after_with_places_ext.csv')
+geo_before_df = pd.read_csv('./data/before_with_places_ext.csv')
 
-# st.markdown("""---""")
+st.markdown("""---""")
 
-# time_container = st.container()
-# time_container.markdown('## Discourse over time')
-# time_container.markdown('Describe what you can do in this time-based ')
+time_container = st.container()
+time_container.markdown('## Discourse over time')
+time_container.markdown('Describe what you can do in this time-based ')
 
-# date_filter = time_container.slider('Select date range', min_value=min_date, max_value=max_date, value=(min_date, max_date), format=date_format)
+date_filter = time_container.slider('Select date range', min_value=min_date, max_value=max_date, value=(min_date, max_date), format=date_format)
 
-# geo_all=(pd.concat([geo_before_df,geo_after_df]))
-# geo_all = geo_all[geo_all['country_code']=='US']
-
-
-
-# us_state_to_abbrev = {
-#     "Alabama": "AL",
-#     "Alaska": "AK",
-#     "Arizona": "AZ",
-#     "Arkansas": "AR",
-#     "California": "CA",
-#     "Colorado": "CO",
-#     "Connecticut": "CT",
-#     "Delaware": "DE",
-#     "Florida": "FL",
-#     "Georgia": "GA",
-#     "Hawaii": "HI",
-#     "Idaho": "ID",
-#     "Illinois": "IL",
-#     "Indiana": "IN",
-#     "Iowa": "IA",
-#     "Kansas": "KS",
-#     "Kentucky": "KY",
-#     "Louisiana": "LA",
-#     "Maine": "ME",
-#     "Maryland": "MD",
-#     "Massachusetts": "MA",
-#     "Michigan": "MI",
-#     "Minnesota": "MN",
-#     "Mississippi": "MS",
-#     "Missouri": "MO",
-#     "Montana": "MT",
-#     "Nebraska": "NE",
-#     "Nevada": "NV",
-#     "New Hampshire": "NH",
-#     "New Jersey": "NJ",
-#     "New Mexico": "NM",
-#     "New York": "NY",
-#     "North Carolina": "NC",
-#     "North Dakota": "ND",
-#     "Ohio": "OH",
-#     "Oklahoma": "OK",
-#     "Oregon": "OR",
-#     "Pennsylvania": "PA",
-#     "Rhode Island": "RI",
-#     "South Carolina": "SC",
-#     "South Dakota": "SD",
-#     "Tennessee": "TN",
-#     "Texas": "TX",
-#     "Utah": "UT",
-#     "Vermont": "VT",
-#     "Virginia": "VA",
-#     "Washington": "WA",
-#     "West Virginia": "WV",
-#     "Wisconsin": "WI",
-#     "Wyoming": "WY",
-#     "District of Columbia": "DC",
-#     "American Samoa": "AS",
-#     "Guam": "GU",
-#     "Northern Mariana Islands": "MP",
-#     "Puerto Rico": "PR",
-#     "United States Minor Outlying Islands": "UM",
-#     "U.S. Virgin Islands": "VI",
-# }
-
-# inverted_us_state = dict(map(reversed, us_state_to_abbrev.items()))
-
-# df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2011_us_ag_exports.csv')
-
-# for col in df.columns:
-#     df[col] = df[col].astype(str)
-
-# df['text'] = df['state'] + '<br>' + \
-#     'Beef ' + df['beef'] + ' Dairy ' + df['dairy'] + '<br>' + \
-#     'Fruits ' + df['total fruits'] + ' Veggies ' + df['total veggies'] + '<br>' + \
-#     'Wheat ' + df['wheat'] + ' Corn ' + df['corn']
+geo_all=(pd.concat([geo_before_df,geo_after_df]))
+geo_all = geo_all[geo_all['country_code']=='US']
 
 
-# df_twitter_after_insurrection = pd.read_csv('./data/twitter_after_insurrection.csv')
+
+us_state_to_abbrev = {
+    "Alabama": "AL",
+    "Alaska": "AK",
+    "Arizona": "AZ",
+    "Arkansas": "AR",
+    "California": "CA",
+    "Colorado": "CO",
+    "Connecticut": "CT",
+    "Delaware": "DE",
+    "Florida": "FL",
+    "Georgia": "GA",
+    "Hawaii": "HI",
+    "Idaho": "ID",
+    "Illinois": "IL",
+    "Indiana": "IN",
+    "Iowa": "IA",
+    "Kansas": "KS",
+    "Kentucky": "KY",
+    "Louisiana": "LA",
+    "Maine": "ME",
+    "Maryland": "MD",
+    "Massachusetts": "MA",
+    "Michigan": "MI",
+    "Minnesota": "MN",
+    "Mississippi": "MS",
+    "Missouri": "MO",
+    "Montana": "MT",
+    "Nebraska": "NE",
+    "Nevada": "NV",
+    "New Hampshire": "NH",
+    "New Jersey": "NJ",
+    "New Mexico": "NM",
+    "New York": "NY",
+    "North Carolina": "NC",
+    "North Dakota": "ND",
+    "Ohio": "OH",
+    "Oklahoma": "OK",
+    "Oregon": "OR",
+    "Pennsylvania": "PA",
+    "Rhode Island": "RI",
+    "South Carolina": "SC",
+    "South Dakota": "SD",
+    "Tennessee": "TN",
+    "Texas": "TX",
+    "Utah": "UT",
+    "Vermont": "VT",
+    "Virginia": "VA",
+    "Washington": "WA",
+    "West Virginia": "WV",
+    "Wisconsin": "WI",
+    "Wyoming": "WY",
+    "District of Columbia": "DC",
+    "American Samoa": "AS",
+    "Guam": "GU",
+    "Northern Mariana Islands": "MP",
+    "Puerto Rico": "PR",
+    "United States Minor Outlying Islands": "UM",
+    "U.S. Virgin Islands": "VI",
+}
+
+inverted_us_state = dict(map(reversed, us_state_to_abbrev.items()))
+
+df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2011_us_ag_exports.csv')
+
+for col in df.columns:
+    df[col] = df[col].astype(str)
+
+df['text'] = df['state'] + '<br>' + \
+    'Beef ' + df['beef'] + ' Dairy ' + df['dairy'] + '<br>' + \
+    'Fruits ' + df['total fruits'] + ' Veggies ' + df['total veggies'] + '<br>' + \
+    'Wheat ' + df['wheat'] + ' Corn ' + df['corn']
 
 
-# fig = go.Figure(data=go.Choropleth(
-#     locations=df['code'],
-#     z=df['total exports'].astype(float),
-#     locationmode='USA-states',
-#     colorscale='Reds',
-#     autocolorscale=False,
-#     text=df['text'], # hover text
-#     marker_line_color='white', # line markers between states
-#     colorbar_title="Millions USD"
-# ))
+df_twitter_after_insurrection = pd.read_csv('./data/twitter_after_insurrection.csv')
 
-# fig.update_layout(
-#     title_text='Discourse in US States',
-#     geo = dict(
-#         scope='usa',
-#         projection=go.layout.geo.Projection(type = 'albers usa'),
-#         showlakes=True, # lakes
-#         lakecolor='rgb(255, 255, 255)'),
-# )
 
-# time_container.plotly_chart(fig)
+fig = go.Figure(data=go.Choropleth(
+    locations=df['code'],
+    z=df['total exports'].astype(float),
+    locationmode='USA-states',
+    colorscale='Reds',
+    autocolorscale=False,
+    text=df['text'], # hover text
+    marker_line_color='white', # line markers between states
+    colorbar_title="Millions USD"
+))
+
+fig.update_layout(
+    title_text='Discourse in US States',
+    geo = dict(
+        scope='usa',
+        projection=go.layout.geo.Projection(type = 'albers usa'),
+        showlakes=True, # lakes
+        lakecolor='rgb(255, 255, 255)'),
+)
+
+time_container.plotly_chart(fig)
 
 st.markdown("""---""")
 
