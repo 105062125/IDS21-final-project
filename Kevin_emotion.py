@@ -1,3 +1,4 @@
+from numpy.core.fromnumeric import sort
 import streamlit as st
 import streamlit.components.v1 as components
 import numpy as np
@@ -9,6 +10,7 @@ from plotly import graph_objs as go
 import re
 # import pydeck as pdk
 import plotly.graph_objects as go
+import plotly.express as px 
 
 
 
@@ -30,8 +32,37 @@ def load_data():
     df_twitter_after_insurrection = pd.read_csv('./data/twitter_after_insurrection.csv')
     df_insurrection_before_all = pd.concat([df_facebook_before_insurrection, df_reddit_before_insurrection, df_twitter_before_insurrection])
     df_insurrection_after_all = pd.concat([df_facebook_after_insurrection, df_reddit_after_insurrection, df_twitter_after_insurrection])
+    df_facebook_all = pd.concat([df_facebook_before_insurrection, df_facebook_after_insurrection])
+    df_facebook_all['date_column'] = pd.to_datetime(df_facebook_all['created_at']).dt.date
+    df_reddit_all = pd.concat([df_reddit_before_insurrection, df_reddit_after_insurrection])
+    df_reddit_all['date_column'] = pd.to_datetime(df_reddit_all['created_at']).dt.date
+    df_twitter_all = pd.concat([df_twitter_before_insurrection, df_twitter_after_insurrection])
+    df_twitter_all['date_column'] = pd.to_datetime(df_twitter_all['created_at']).dt.date
+    df_all = pd.concat([df_insurrection_before_all, df_insurrection_after_all])
 
-    return df_insurrection_before_all, df_insurrection_after_all, df_facebook_before_insurrection, df_facebook_after_insurrection, df_reddit_before_insurrection, df_reddit_after_insurrection, df_twitter_before_insurrection, df_twitter_after_insurrection
+    return df_facebook_all, df_reddit_all, df_twitter_all, df_all, df_insurrection_before_all, df_insurrection_after_all, df_facebook_before_insurrection, df_facebook_after_insurrection, df_reddit_before_insurrection, df_reddit_after_insurrection, df_twitter_before_insurrection, df_twitter_after_insurrection
+
+@st.cache
+def load_data2():
+
+    df_facebook_before_election = pd.read_csv('./data/facebook_before_election.csv')
+    df_facebook_after_election = pd.read_csv('./data/facebook_after_election.csv')
+    df_reddit_before_election = pd.read_csv('./data/reddit_before_election.csv')
+    df_reddit_after_election = pd.read_csv('./data/reddit_after_election.csv')
+    df_twitter_before_election = pd.read_csv('./data/twitter_before_election.csv')
+    df_twitter_after_election = pd.read_csv('./data/twitter_after_election.csv')
+    df_election_before_all = pd.concat([df_facebook_before_election, df_reddit_before_election, df_twitter_before_election])
+    df_election_after_all = pd.concat([df_facebook_after_election, df_reddit_after_election, df_twitter_after_election])
+    df_facebook_all_election = pd.concat([df_facebook_before_election, df_facebook_after_election])
+    df_facebook_all_election['date_column'] = pd.to_datetime(df_facebook_all_election['created_at']).dt.date
+    df_reddit_all_election = pd.concat([df_reddit_before_election, df_reddit_after_election])
+    df_reddit_all_election['date_column'] = pd.to_datetime(df_reddit_all_election['created_at']).dt.date
+    df_twitter_all_election = pd.concat([df_twitter_before_election, df_twitter_after_election])
+    df_twitter_all_election['date_column'] = pd.to_datetime(df_twitter_all_election['created_at']).dt.date
+    df_all_election = pd.concat([df_election_before_all, df_election_after_all])
+
+    return df_facebook_all_election, df_reddit_all_election, df_twitter_all_election, df_all_election
+
 
 #df_linechart_freq = {fb_ctdate[], fb_ctdate['id'], tw_ctdate['id'], rd_ctdate['id']}
 
@@ -57,7 +88,8 @@ with btn_col2:
 # Statistics of each social media platform
 stat_col1, stat_col2, stat_col3 = st.columns(3)
 
-df_insurrection_before_all, df_insurrection_after_all, df_facebook_before_insurrection, df_facebook_after_insurrection, df_reddit_before_insurrection, df_reddit_after_insurrection, df_twitter_before_insurrection, df_twitter_after_insurrection = load_data()
+df_facebook_all, df_reddit_all, df_twitter_all, df_all, df_insurrection_before_all, df_insurrection_after_all, df_facebook_before_insurrection, df_facebook_after_insurrection, df_reddit_before_insurrection, df_reddit_after_insurrection, df_twitter_before_insurrection, df_twitter_after_insurrection = load_data()
+df_facebook_all_election, df_reddit_all_election, df_twitter_all_election, df_all_election = load_data2()
 
 df_facebook_before = df_facebook_before_insurrection
 df_facebook_after = df_facebook_after_insurrection
@@ -65,6 +97,11 @@ df_reddit_before = df_reddit_before_insurrection
 df_reddit_after = df_reddit_after_insurrection
 df_twitter_after = df_twitter_after_insurrection
 df_twitter_before = df_twitter_before_insurrection
+
+# df_facebook_all = pd.concat([df_facebook_before_insurrection, df_facebook_after_insurrection])
+# df_reddit_all = pd.concat([df_reddit_before_insurrection, df_reddit_after_insurrection])
+# df_twitter_all = pd.concat([df_twitter_before_insurrection, df_twitter_after_insurrection])
+
 
 # METRICS
 facebook_total = len(df_facebook_before) + len(df_facebook_after)
@@ -247,8 +284,115 @@ st.markdown("""---""")
 
 emotion_container = st.container()
 emotion_container.markdown('## Emotions in discourse')
+selector_way = st.radio(" ", ('Election', 'Insurrection'))
+social_selector_emotion = st.radio(" ", ('Facebook', 'Reddit', 'Twitter'))
 st.markdown('<p style=color:grey;font-size:1em;>Sentiment<p>', unsafe_allow_html=True)
-st.markdown('<p style=color:grey;font-size:1em;>Emotion<p>', unsafe_allow_html=True)
+box_posneg_1, box_emotion_up_space, box_posneg_2 = st.columns((2, 0.1, 1))
+if selector_way == 'Insurrection':
+    with box_posneg_1:
+        st.markdown('TO DO: Explain what\'s going on in the boxplot Insurrection')
+    with box_posneg_2:
+        st.markdown('TO DO: Explain what\'s going on in the boxplot Insurrection')
+elif selector_way == 'Election':
+    with box_posneg_1:
+        st.markdown('TO DO: Explain what\'s going on in the boxplot Election')
+    with box_posneg_2:
+        st.markdown('TO DO: Explain what\'s going on in the boxplot Election')
+
+
+
+st.markdown('<p style=color:grey;font-size:1em;>Emotion over time<p>', unsafe_allow_html=True)
+
+box_emotion_up_1, box_emotion_up_space, box_emotion_up_2, box_emotion_up_3 = st.columns((2, 0.1, 2, 1))
+
+if selector_way == 'Insurrection':
+    with box_emotion_up_1:
+        if social_selector_emotion == 'Facebook':
+            df_stack = pd.DataFrame({'sadness': df_facebook_all['emotion.sadness'].tolist(),'anger': df_facebook_all['emotion.anger'].tolist(),'disgust': df_facebook_all['emotion.disgust'].tolist(),'joy': df_facebook_all['emotion.joy'].tolist(),'fear': df_facebook_all['emotion.fear'].tolist(), 'date':df_facebook_all['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            # fig = px.bar(df_stack, x="date", y=["sadness", "anger", "disgust"])
+            # st.write(fig)
+            st.bar_chart(df_stack)
+        elif social_selector_emotion == 'Reddit':
+            df_stack = pd.DataFrame({'sadness': df_reddit_all['emotion.sadness'].tolist(),'anger': df_reddit_all['emotion.anger'].tolist(),'disgust': df_reddit_all['emotion.disgust'].tolist(),'joy': df_reddit_all['emotion.joy'].tolist(),'fear': df_reddit_all['emotion.fear'].tolist(), 'date':df_reddit_all['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+        elif social_selector_emotion == 'Twitter':
+            df_stack = pd.DataFrame({'sadness': df_twitter_all['emotion.sadness'].tolist(),'anger': df_twitter_all['emotion.anger'].tolist(),'disgust': df_twitter_all['emotion.disgust'].tolist(),'joy': df_twitter_all['emotion.joy'].tolist(),'fear': df_twitter_all['emotion.fear'].tolist(), 'date':df_twitter_all['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+
+
+    with box_emotion_up_2:
+        
+        if social_selector_emotion == 'Facebook':
+            df_emo = pd.DataFrame(df_facebook_all['highest_emotion'].value_counts())
+            # fig=px.bar(df_emo, orientation='h')
+            # st.write(fig)
+            st.bar_chart(df_emo)
+        elif social_selector_emotion == 'Reddit':
+            df_emo = pd.DataFrame(df_reddit_all['highest_emotion'].value_counts())
+            # fig=px.bar(df_emo, orientation='h')
+            # st.write(fig)
+            st.bar_chart(df_emo)
+        elif social_selector_emotion == 'Twitter':
+            df_emo = pd.DataFrame(df_twitter_all['highest_emotion'].value_counts())
+            # fig=px.bar(df_emo, orientation='h')
+            # st.write(fig)
+            st.bar_chart(df_emo)
+    with box_emotion_up_3:
+        st.markdown('TO DO: Explain what\'s going on in the boxplot')
+
+elif selector_way == 'Election':
+    with box_emotion_up_1:
+        if social_selector_emotion == 'Facebook':
+            df_stack = pd.DataFrame({'sadness': df_facebook_all_election['emotion.sadness'].tolist(),'anger': df_facebook_all_election['emotion.anger'].tolist(),'disgust': df_facebook_all_election['emotion.disgust'].tolist(),'joy': df_facebook_all_election['emotion.joy'].tolist(),'fear': df_facebook_all_election['emotion.fear'].tolist(), 'date':df_facebook_all_election['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            # fig = px.bar(df_stack, x="date", y=["sadness", "anger", "disgust"])
+            # st.write(fig)
+            st.bar_chart(df_stack)
+        elif social_selector_emotion == 'Reddit':
+            df_stack = pd.DataFrame({'sadness': df_reddit_all_election['emotion.sadness'].tolist(),'anger': df_reddit_all_election['emotion.anger'].tolist(),'disgust': df_reddit_all_election['emotion.disgust'].tolist(),'joy': df_reddit_all_election['emotion.joy'].tolist(),'fear': df_reddit_all_election['emotion.fear'].tolist(), 'date':df_reddit_all_election['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+        elif social_selector_emotion == 'Twitter':
+            df_stack = pd.DataFrame({'sadness': df_twitter_all_election['emotion.sadness'].tolist(),'anger': df_twitter_all_election['emotion.anger'].tolist(),'disgust': df_twitter_all_election['emotion.disgust'].tolist(),'joy': df_twitter_all_election['emotion.joy'].tolist(),'fear': df_twitter_all_election['emotion.fear'].tolist(), 'date':df_twitter_all_election['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+
+
+    with box_emotion_up_2:
+        
+        if social_selector_emotion == 'Facebook':
+            df_emo = pd.DataFrame(df_facebook_all_election['highest_emotion'].value_counts())
+            # fig=px.bar(df_emo, orientation='h')
+            # st.write(fig)
+            st.bar_chart(df_emo)
+        elif social_selector_emotion == 'Reddit':
+            df_emo = pd.DataFrame(df_reddit_all_election['highest_emotion'].value_counts())
+            # fig=px.bar(df_emo, orientation='h')
+            # st.write(fig)
+            st.bar_chart(df_emo)
+        elif social_selector_emotion == 'Twitter':
+            df_emo = pd.DataFrame(df_twitter_all_election['highest_emotion'].value_counts())
+            # fig=px.bar(df_emo, orientation='h')
+            # st.write(fig)
+            st.bar_chart(df_emo)
+    with box_emotion_up_3:
+        st.markdown('TO DO: Explain what\'s going on in the boxplot')
+
+
+
+
+
+
+    # df_stack.iloc[:100].plot.bar(stacked=True)
+# df_stack = pd.DataFrame({'sadness': df_all['emotion.sadness'].tolist(),'anger': df_all['emotion.anger'].tolist(),'disgust': df_all['emotion.disgust'].tolist(),'joy': df_all['emotion.joy'].tolist(),'fear': df_all['emotion.fear'].tolist(), 'date':df_all['date_column'].tolist() })
+# df_stack = df_stack.groupby('date').agg('sum')
+# df_stack.plot.bar(stacked=True)
+
+
+
 st.markdown('<p style=font-weight:bold;font-size:1rem;color:grey;>EMOTIONS OVER TIME <p>', unsafe_allow_html=True)
 st.markdown('TO DO: Explain shares of emotions that are dominating over time ')
 ways = st.radio("", ('Election', 'Insurrection'))
