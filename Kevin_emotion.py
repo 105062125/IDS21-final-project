@@ -21,7 +21,7 @@ st.title('The United States Election and Insurrection')
 DATE_COLUMN = 'created_at'
 
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def load_data():
 
     df_facebook_before_insurrection = pd.read_csv('./data/facebook_before_insurrection.csv')
@@ -30,15 +30,18 @@ def load_data():
     df_reddit_after_insurrection = pd.read_csv('./data/reddit_after_insurrection.csv')
     df_twitter_before_insurrection = pd.read_csv('./data/twitter_before_insurrection.csv')
     df_twitter_after_insurrection = pd.read_csv('./data/twitter_after_insurrection.csv')
-    df_insurrection_before_all = pd.concat([df_facebook_before_insurrection, df_reddit_before_insurrection, df_twitter_before_insurrection])
-    df_insurrection_after_all = pd.concat([df_facebook_after_insurrection, df_reddit_after_insurrection, df_twitter_after_insurrection])
+    
     df_facebook_all = pd.concat([df_facebook_before_insurrection, df_facebook_after_insurrection])
     df_facebook_all['date_column'] = pd.to_datetime(df_facebook_all['created_at']).dt.date
     df_reddit_all = pd.concat([df_reddit_before_insurrection, df_reddit_after_insurrection])
     df_reddit_all['date_column'] = pd.to_datetime(df_reddit_all['created_at']).dt.date
     df_twitter_all = pd.concat([df_twitter_before_insurrection, df_twitter_after_insurrection])
     df_twitter_all['date_column'] = pd.to_datetime(df_twitter_all['created_at']).dt.date
-    df_all = pd.concat([df_insurrection_before_all, df_insurrection_after_all])
+
+    df_insurrection_before_all = pd.concat([df_facebook_before_insurrection, df_reddit_before_insurrection, df_twitter_before_insurrection])
+    df_insurrection_after_all = pd.concat([df_facebook_after_insurrection, df_reddit_after_insurrection, df_twitter_after_insurrection])
+    
+    df_all = pd.concat([df_facebook_all, df_reddit_all, df_twitter_all])
 
     return df_facebook_all, df_reddit_all, df_twitter_all, df_all, df_insurrection_before_all, df_insurrection_after_all, df_facebook_before_insurrection, df_facebook_after_insurrection, df_reddit_before_insurrection, df_reddit_after_insurrection, df_twitter_before_insurrection, df_twitter_after_insurrection
 
@@ -288,14 +291,111 @@ selector_way = st.radio(" ", ('Election', 'Insurrection'))
 social_selector_emotion = st.radio(" ", ('Facebook', 'Reddit', 'Twitter'))
 st.markdown('<p style=color:grey;font-size:1em;>Sentiment<p>', unsafe_allow_html=True)
 box_posneg_1, box_emotion_up_space, box_posneg_2 = st.columns((2, 0.1, 1))
+values = ['negative', 'positive', 'neutral']
+
 if selector_way == 'Insurrection':
     with box_posneg_1:
-        st.markdown('TO DO: Explain what\'s going on in the boxplot Insurrection')
+        if social_selector_emotion == 'Facebook':
+            
+            conditions = [
+            (df_facebook_all['liwc.posemo'] < df_facebook_all['liwc.negemo']),
+            (df_facebook_all['liwc.posemo'] > df_facebook_all['liwc.negemo']),
+            (df_facebook_all['liwc.posemo'] == df_facebook_all['liwc.negemo'])
+            ]
+            sentiment_table = df_facebook_all.copy()
+            sentiment_table['sentiment'] = np.select(conditions, values)
+            sentiment_table['pos'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='positive' else 0)
+            sentiment_table['neg'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='negative' else 0)
+            sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
+            df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+            df_stack.plot.bar(stacked=True)
+        elif social_selector_emotion == 'Reddit':
+            
+            conditions = [
+            (df_reddit_all['liwc.posemo'] < df_reddit_all['liwc.negemo']),
+            (df_reddit_all['liwc.posemo'] > df_reddit_all['liwc.negemo']),
+            (df_reddit_all['liwc.posemo'] == df_reddit_all['liwc.negemo'])
+            ]
+            sentiment_table = df_reddit_all.copy()
+            sentiment_table['sentiment'] = np.select(conditions, values)
+            sentiment_table['pos'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='positive' else 0)
+            sentiment_table['neg'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='negative' else 0)
+            sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
+            df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+            df_stack.plot.bar(stacked=True)
+        elif social_selector_emotion == 'Twitter':
+            
+            conditions = [
+            (df_twitter_all['liwc.posemo'] < df_twitter_all['liwc.negemo']),
+            (df_twitter_all['liwc.posemo'] > df_twitter_all['liwc.negemo']),
+            (df_twitter_all['liwc.posemo'] == df_twitter_all['liwc.negemo'])
+            ]
+            sentiment_table = df_twitter_all.copy()
+            sentiment_table['sentiment'] = np.select(conditions, values)
+            sentiment_table['pos'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='positive' else 0)
+            sentiment_table['neg'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='negative' else 0)
+            sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
+            df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+            df_stack.plot.bar(stacked=True)
     with box_posneg_2:
         st.markdown('TO DO: Explain what\'s going on in the boxplot Insurrection')
+
 elif selector_way == 'Election':
     with box_posneg_1:
-        st.markdown('TO DO: Explain what\'s going on in the boxplot Election')
+        if social_selector_emotion == 'Facebook':
+            
+            conditions = [
+            (df_facebook_all_election['liwc.posemo'] < df_facebook_all_election['liwc.negemo']),
+            (df_facebook_all_election['liwc.posemo'] > df_facebook_all_election['liwc.negemo']),
+            (df_facebook_all_election['liwc.posemo'] == df_facebook_all_election['liwc.negemo'])
+            ]
+            sentiment_table = df_facebook_all_election.copy()
+            sentiment_table['sentiment'] = np.select(conditions, values)
+            sentiment_table['pos'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='positive' else 0)
+            sentiment_table['neg'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='negative' else 0)
+            sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
+            df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+            df_stack.plot.bar(stacked=True)
+        elif social_selector_emotion == 'Reddit':
+            
+            conditions = [
+            (df_reddit_all_election['liwc.posemo'] < df_reddit_all_election['liwc.negemo']),
+            (df_reddit_all_election['liwc.posemo'] > df_reddit_all_election['liwc.negemo']),
+            (df_reddit_all_election['liwc.posemo'] == df_reddit_all_election['liwc.negemo'])
+            ]
+            sentiment_table = df_reddit_all_election.copy()
+            sentiment_table['sentiment'] = np.select(conditions, values)
+            sentiment_table['pos'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='positive' else 0)
+            sentiment_table['neg'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='negative' else 0)
+            sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
+            df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+            df_stack.plot.bar(stacked=True)
+        elif social_selector_emotion == 'Twitter':
+            
+            conditions = [
+            (df_twitter_all_election['liwc.posemo'] < df_twitter_all_election['liwc.negemo']),
+            (df_twitter_all_election['liwc.posemo'] > df_twitter_all_election['liwc.negemo']),
+            (df_twitter_all_election['liwc.posemo'] == df_twitter_all_election['liwc.negemo'])
+            ]
+            sentiment_table = df_twitter_all_election.copy()
+            sentiment_table['sentiment'] = np.select(conditions, values)
+            sentiment_table['pos'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='positive' else 0)
+            sentiment_table['neg'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='negative' else 0)
+            sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
+            df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
+            df_stack = df_stack.groupby('date').agg('sum')
+            st.bar_chart(df_stack)
+            df_stack.plot.bar(stacked=True)
     with box_posneg_2:
         st.markdown('TO DO: Explain what\'s going on in the boxplot Election')
 
