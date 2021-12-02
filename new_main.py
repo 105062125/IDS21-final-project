@@ -430,21 +430,26 @@ fig.update_layout(
         showlakes=True, # lakes
         lakecolor='rgb(255, 255, 255)'),
 )
+time_container.markdown('##### Geographic concentration of posts')
 
 time_container.plotly_chart(fig)
+
+time_container.markdown('In this section we can see where the concentration of Twitter posts come from based on tweets that have geolocation tag on them')
 
 st.markdown("""---""")
 
 emotion_container = st.container()
 emotion_container.markdown('### Emotions in discourse')
-st.markdown('<p style=color:grey;font-size:1em;>Sentiment<p>', unsafe_allow_html=True)
-box_posneg_1, box_emotion_up_space, box_posneg_2 = st.columns((2, 0.1, 1))
+emotion_container.markdown('In this section we can explore the emotions that are present in the discourse over time: share of positive vs negative sentiments, how the posts fit in the 5 basic human emotions (sadness, joy, disgust, anger and fear) and sample post that fit each emotion in the discourse')
+social_selector=emotion_container.radio("Social media filter",("Facebook","Reddit","Twitter"), index=2, key = "socialselectemo")
+emotion_container.markdown('##### Sentiments over time')
+
+box_posneg_1, box_emotion_up_space, box_posneg_2 = emotion_container.columns((2, 0.1, 1))
 values = ['negative', 'positive', 'neutral']
 
 if event_selector == 'Insurrection':
     with box_posneg_1:
-        if choose == 'Facebook':
-
+        if social_selector == 'Facebook':
             conditions = [
             (df_facebook_all['liwc.posemo'] < df_facebook_all['liwc.negemo']),
             (df_facebook_all['liwc.posemo'] > df_facebook_all['liwc.negemo']),
@@ -457,11 +462,9 @@ if event_selector == 'Insurrection':
             sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
             df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
             df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
-            st.write(df_stack)
+            box_posneg_1.bar_chart(df_stack)
             df_stack.plot.bar(stacked=True)
-        elif choose == 'Reddit':
-
+        elif social_selector == 'Reddit':
             conditions = [
             (df_reddit_all['liwc.posemo'] < df_reddit_all['liwc.negemo']),
             (df_reddit_all['liwc.posemo'] > df_reddit_all['liwc.negemo']),
@@ -474,10 +477,9 @@ if event_selector == 'Insurrection':
             sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
             df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
             df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
+            box_posneg_1.bar_chart(df_stack)
             df_stack.plot.bar(stacked=True)
-        elif choose == 'Twitter':
-
+        elif social_selector == 'Twitter':
             conditions = [
             (df_twitter_all['liwc.posemo'] < df_twitter_all['liwc.negemo']),
             (df_twitter_all['liwc.posemo'] > df_twitter_all['liwc.negemo']),
@@ -490,14 +492,14 @@ if event_selector == 'Insurrection':
             sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
             df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
             df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
+            box_posneg_1.bar_chart(df_stack)
             df_stack.plot.bar(stacked=True)
     with box_posneg_2:
-        st.markdown('TO DO: Explain what\'s going on in the boxplot Insurrection')
+        box_posneg_2.markdown('In the discourse around insurrection, we see that sentiment are mostly X and we see there\'s a turning point in x because of abc bla bla bla ')
 
-elif event_selector == 'Election':
+elif event_selector == 'Election Fraud':
     with box_posneg_1:
-        if choose == 'Facebook':
+        if social_selector == 'Facebook':
 
             conditions = [
             (df_facebook_all_election['liwc.posemo'] < df_facebook_all_election['liwc.negemo']),
@@ -511,9 +513,9 @@ elif event_selector == 'Election':
             sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
             df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
             df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
+            box_posneg_1.bar_chart(df_stack)
             df_stack.plot.bar(stacked=True)
-        elif choose == 'Reddit':
+        elif social_selector == 'Reddit':
 
             conditions = [
             (df_reddit_all_election['liwc.posemo'] < df_reddit_all_election['liwc.negemo']),
@@ -527,9 +529,9 @@ elif event_selector == 'Election':
             sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
             df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
             df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
+            box_posneg_1.bar_chart(df_stack)
             df_stack.plot.bar(stacked=True)
-        elif choose == 'Twitter':
+        elif social_selector == 'Twitter':
 
             conditions = [
             (df_twitter_all_election['liwc.posemo'] < df_twitter_all_election['liwc.negemo']),
@@ -543,139 +545,169 @@ elif event_selector == 'Election':
             sentiment_table['neutral'] = sentiment_table['sentiment'].apply(lambda x: 1 if x=='neutral' else 0)
             df_stack = pd.DataFrame({'pos': sentiment_table['pos'].tolist(),'neg': sentiment_table['neg'].tolist(),'neutral': sentiment_table['neutral'].tolist(), 'date':sentiment_table['date_column'].tolist() })
             df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
+            box_posneg_1.bar_chart(df_stack)
             df_stack.plot.bar(stacked=True)
     with box_posneg_2:
-        st.markdown('TO DO: Explain what\'s going on in the boxplot Election')
+        box_posneg_2.markdown('In the discourse around election fraud, we see that sentiment are mostly X and we see there\'s a turning point in x because of abc bla bla bla ')
 
 
 
-st.markdown('<p style=color:grey;font-size:1em;>Emotion over time<p>', unsafe_allow_html=True)
+emotion_container.markdown('##### Share of emotions over time')
 
-box_emotion_up_1, box_emotion_up_space, box_emotion_up_2, box_emotion_up_3 = st.columns((2, 0.1, 2, 1))
-
+box_emotion_up_1, box_emotion_up_space, box_emotion_up_2 = emotion_container.columns((2, 0.1, 1))
 if event_selector == 'Insurrection':
     with box_emotion_up_1:
-        if social_selector_emotion == 'Facebook':
-            df_stack = pd.DataFrame({'sadness': df_facebook_all['emotion.sadness'].tolist(),'anger': df_facebook_all['emotion.anger'].tolist(),'disgust': df_facebook_all['emotion.disgust'].tolist(),'joy': df_facebook_all['emotion.joy'].tolist(),'fear': df_facebook_all['emotion.fear'].tolist(), 'date':df_facebook_all['date_column'].tolist() })
-            df_stack = df_stack.groupby('date').agg('sum')
-            # fig = px.bar(df_stack, x="date", y=["sadness", "anger", "disgust"])
-            # st.write(fig)
-            st.bar_chart(df_stack)
-        elif social_selector_emotion == 'Reddit':
-            df_stack = pd.DataFrame({'sadness': df_reddit_all['emotion.sadness'].tolist(),'anger': df_reddit_all['emotion.anger'].tolist(),'disgust': df_reddit_all['emotion.disgust'].tolist(),'joy': df_reddit_all['emotion.joy'].tolist(),'fear': df_reddit_all['emotion.fear'].tolist(), 'date':df_reddit_all['date_column'].tolist() })
-            df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
-        elif social_selector_emotion == 'Twitter':
-            df_stack = pd.DataFrame({'sadness': df_twitter_all['emotion.sadness'].tolist(),'anger': df_twitter_all['emotion.anger'].tolist(),'disgust': df_twitter_all['emotion.disgust'].tolist(),'joy': df_twitter_all['emotion.joy'].tolist(),'fear': df_twitter_all['emotion.fear'].tolist(), 'date':df_twitter_all['date_column'].tolist() })
-            df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
+        if social_selector == 'Facebook':
+            df_emo = pd.DataFrame(df_facebook_all['highest_emotion'].value_counts()).reset_index()
+            df_emo.columns = ['emotions', 'frequency']
+            df_emo['color'] = ['#c489be','#4317aa','#452a49','#686860','#54a24b']
+
+
+            emo_bars = alt.Chart(df_emo).mark_bar().encode(
+                x=alt.X('frequency', axis=alt.Axis(title='Frequency')),
+                y=alt.Y('emotions', axis=alt.Axis(title='Terms'), sort='-x'),
+                        color=alt.Color('color', scale=None)
+            )
+
+
+            box_emotion_up_1.altair_chart(emo_bars, use_container_width = True)
+
+        elif social_selector == 'Reddit':
+            df_emo = pd.DataFrame(df_reddit_all['highest_emotion'].value_counts()).reset_index()
+            df_emo.columns = ['emotions', 'frequency']
+            df_emo['color'] = ['#c489be','#4317aa','#452a49','#686860','#54a24b']
+
+
+            emo_bars = alt.Chart(df_emo).mark_bar().encode(
+                x=alt.X('frequency', axis=alt.Axis(title='Frequency')),
+                y=alt.Y('emotions', axis=alt.Axis(title='Terms'), sort='-x'),
+                        color=alt.Color('color', scale=None)
+            )
+
+
+            box_emotion_up_1.altair_chart(emo_bars, use_container_width = True)
+        elif social_selector == 'Twitter':
+            df_emo = pd.DataFrame(df_twitter_all['highest_emotion'].value_counts()).reset_index()
+            df_emo.columns = ['emotions', 'frequency']
+            df_emo['color'] = ['#c489be','#4317aa','#452a49','#686860','#54a24b']
+
+
+            emo_bars = alt.Chart(df_emo).mark_bar().encode(
+                x=alt.X('frequency', axis=alt.Axis(title='Frequency')),
+                y=alt.Y('emotions', axis=alt.Axis(title='Terms'), sort='-x'),
+                        color=alt.Color('color', scale=None)
+            )
+
+
+            box_emotion_up_1.altair_chart(emo_bars, use_container_width = True)
 
 
     with box_emotion_up_2:
+        box_emotion_up_2.markdown('The dominating emotion on the insurrection discourse is disgust, bla bla bla')
+    if social_selector == 'Facebook':
+        df_stack = pd.DataFrame({'sadness': df_facebook_all['emotion.sadness'].tolist(),'anger': df_facebook_all['emotion.anger'].tolist(),'disgust': df_facebook_all['emotion.disgust'].tolist(),'joy': df_facebook_all['emotion.joy'].tolist(),'fear': df_facebook_all['emotion.fear'].tolist(), 'date':df_facebook_all['date_column'].tolist() })
+        df_stack = df_stack.groupby('date').agg('sum')
+            # fig = px.bar(df_stack, x="date", y=["sadness", "anger", "disgust"])
+            # st.write(fig)
+        emotion_container.bar_chart(df_stack)
+    elif social_selector == 'Reddit':
+        df_stack = pd.DataFrame({'sadness': df_reddit_all['emotion.sadness'].tolist(),'anger': df_reddit_all['emotion.anger'].tolist(),'disgust': df_reddit_all['emotion.disgust'].tolist(),'joy': df_reddit_all['emotion.joy'].tolist(),'fear': df_reddit_all['emotion.fear'].tolist(), 'date':df_reddit_all['date_column'].tolist() })
+        df_stack = df_stack.groupby('date').agg('sum')
+        emotion_container.bar_chart(df_stack)
+    elif social_selector == 'Twitter':
+        df_stack = pd.DataFrame({'sadness': df_twitter_all['emotion.sadness'].tolist(),'anger': df_twitter_all['emotion.anger'].tolist(),'disgust': df_twitter_all['emotion.disgust'].tolist(),'joy': df_twitter_all['emotion.joy'].tolist(),'fear': df_twitter_all['emotion.fear'].tolist(), 'date':df_twitter_all['date_column'].tolist() })
+        df_stack = df_stack.groupby('date').agg('sum')
+        emotion_container.bar_chart(df_stack)
 
-        if social_selector_emotion == 'Facebook':
-            df_emo = pd.DataFrame(df_facebook_all['highest_emotion'].value_counts())
-            # fig=px.bar(df_emo, orientation='h')
-            # st.write(fig)
-            st.bar_chart(df_emo)
-        elif social_selector_emotion == 'Reddit':
-            df_emo = pd.DataFrame(df_reddit_all['highest_emotion'].value_counts())
-            # fig=px.bar(df_emo, orientation='h')
-            # st.write(fig)
-            st.bar_chart(df_emo)
-        elif social_selector_emotion == 'Twitter':
-            df_emo = pd.DataFrame(df_twitter_all['highest_emotion'].value_counts())
-            # fig=px.bar(df_emo, orientation='h')
-            # st.write(fig)
-            st.bar_chart(df_emo)
-    with box_emotion_up_3:
-        st.markdown('TO DO: Explain what\'s going on in the boxplot')
-
-elif event_selector == 'Election':
+elif event_selector == 'Election Fraud':
     with box_emotion_up_1:
-        if social_selector_emotion == 'Facebook':
-            df_stack = pd.DataFrame({'sadness': df_facebook_all_election['emotion.sadness'].tolist(),'anger': df_facebook_all_election['emotion.anger'].tolist(),'disgust': df_facebook_all_election['emotion.disgust'].tolist(),'joy': df_facebook_all_election['emotion.joy'].tolist(),'fear': df_facebook_all_election['emotion.fear'].tolist(), 'date':df_facebook_all_election['date_column'].tolist() })
-            df_stack = df_stack.groupby('date').agg('sum')
-            # fig = px.bar(df_stack, x="date", y=["sadness", "anger", "disgust"])
-            # st.write(fig)
-            st.bar_chart(df_stack)
-        elif social_selector_emotion == 'Reddit':
-            df_stack = pd.DataFrame({'sadness': df_reddit_all_election['emotion.sadness'].tolist(),'anger': df_reddit_all_election['emotion.anger'].tolist(),'disgust': df_reddit_all_election['emotion.disgust'].tolist(),'joy': df_reddit_all_election['emotion.joy'].tolist(),'fear': df_reddit_all_election['emotion.fear'].tolist(), 'date':df_reddit_all_election['date_column'].tolist() })
-            df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
-        elif social_selector_emotion == 'Twitter':
-            df_stack = pd.DataFrame({'sadness': df_twitter_all_election['emotion.sadness'].tolist(),'anger': df_twitter_all_election['emotion.anger'].tolist(),'disgust': df_twitter_all_election['emotion.disgust'].tolist(),'joy': df_twitter_all_election['emotion.joy'].tolist(),'fear': df_twitter_all_election['emotion.fear'].tolist(), 'date':df_twitter_all_election['date_column'].tolist() })
-            df_stack = df_stack.groupby('date').agg('sum')
-            st.bar_chart(df_stack)
-
-
-    with box_emotion_up_2:
-
-        if social_selector_emotion == 'Facebook':
+        if social_selector == 'Facebook':
             df_emo = pd.DataFrame(df_facebook_all_election['highest_emotion'].value_counts())
             # fig=px.bar(df_emo, orientation='h')
             # st.write(fig)
-            st.bar_chart(df_emo)
-        elif social_selector_emotion == 'Reddit':
+            box_emotion_up_1.bar_chart(df_emo)
+        elif social_selector == 'Reddit':
             df_emo = pd.DataFrame(df_reddit_all_election['highest_emotion'].value_counts())
             # fig=px.bar(df_emo, orientation='h')
             # st.write(fig)
-            st.bar_chart(df_emo)
-        elif social_selector_emotion == 'Twitter':
+            box_emotion_up_1.bar_chart(df_emo)
+        elif social_selector == 'Twitter':
             df_emo = pd.DataFrame(df_twitter_all_election['highest_emotion'].value_counts())
             # fig=px.bar(df_emo, orientation='h')
             # st.write(fig)
-            st.bar_chart(df_emo)
-    with box_emotion_up_3:
-        st.markdown('TO DO: Explain what\'s going on in the boxplot')
+            box_emotion_up_1.bar_chart(df_emo)
+
+    with box_emotion_up_2:
+        box_emotion_up_2.markdown('The dominating emotion on the election discourse is disgust, bla bla bla')
+    if social_selector == 'Facebook':
+        df_stack = pd.DataFrame({'sadness': df_facebook_all_election['emotion.sadness'].tolist(),'anger': df_facebook_all_election['emotion.anger'].tolist(),'disgust': df_facebook_all_election['emotion.disgust'].tolist(),'joy': df_facebook_all_election['emotion.joy'].tolist(),'fear': df_facebook_all_election['emotion.fear'].tolist(), 'date':df_facebook_all_election['date_column'].tolist() })
+        df_stack = df_stack.groupby('date').agg('sum')
+        # fig = px.bar(df_stack, x="date", y=["sadness", "anger", "disgust"])
+        # st.write(fig)
+        emotion_container.bar_chart(df_stack)
+    elif social_selector == 'Reddit':
+        df_stack = pd.DataFrame({'sadness': df_reddit_all_election['emotion.sadness'].tolist(),'anger': df_reddit_all_election['emotion.anger'].tolist(),'disgust': df_reddit_all_election['emotion.disgust'].tolist(),'joy': df_reddit_all_election['emotion.joy'].tolist(),'fear': df_reddit_all_election['emotion.fear'].tolist(), 'date':df_reddit_all_election['date_column'].tolist() })
+        df_stack = df_stack.groupby('date').agg('sum')
+        emotion_container.bar_chart(df_stack)
+    elif social_selector == 'Twitter':
+        df_stack = pd.DataFrame({'sadness': df_twitter_all_election['emotion.sadness'].tolist(),'anger': df_twitter_all_election['emotion.anger'].tolist(),'disgust': df_twitter_all_election['emotion.disgust'].tolist(),'joy': df_twitter_all_election['emotion.joy'].tolist(),'fear': df_twitter_all_election['emotion.fear'].tolist(), 'date':df_twitter_all_election['date_column'].tolist() })
+        df_stack = df_stack.groupby('date').agg('sum')
+        emotion_container.bar_chart(df_stack)
 
 
 
+emotion_container.markdown('##### Intensity of emotions over time')
+emotion_container.markdown('In this section we can explore how intense are the emotions over the course of the discourse')
 
+emotion_selector = emotion_container.radio("Pick an emotion you want to focus on", ('Sadness', 'Anger', 'Disgust', 'Fear', 'Joy'))
 
-
-    # df_stack.iloc[:100].plot.bar(stacked=True)
-# df_stack = pd.DataFrame({'sadness': df_all['emotion.sadness'].tolist(),'anger': df_all['emotion.anger'].tolist(),'disgust': df_all['emotion.disgust'].tolist(),'joy': df_all['emotion.joy'].tolist(),'fear': df_all['emotion.fear'].tolist(), 'date':df_all['date_column'].tolist() })
-# df_stack = df_stack.groupby('date').agg('sum')
-# df_stack.plot.bar(stacked=True)
-
-
-
-st.markdown('<p style=font-weight:bold;font-size:1rem;color:grey;>EMOTIONS OVER TIME <p>', unsafe_allow_html=True)
-st.markdown('TO DO: Explain shares of emotions that are dominating over time ')
-ways = st.radio("", ('Election', 'Insurrection'))
-social_selector = st.radio("", ('All', 'Facebook', 'Reddit', 'Twitter'))
-emotion_selector = st.radio("", ('Sadness', 'Anger', 'Disgust', 'Fear', 'Joy'))
-if 'emotion' not in st.session_state:
-    st.session_state.emotion = emotion_selector.lower()
-
-box_emotion_1, box_emotion_space, box_emotion_2 = st.columns((2, 0.1, 1))
+box_emotion_1, box_emotion_space, box_emotion_2 = emotion_container.columns((2, 0.1, 1))
 
 df_insurrection_before_all_len = len(df_insurrection_before_all)
 df_insurrection_after_all_len = len(df_insurrection_after_all)
 
 with box_emotion_1:
-    st.write('Box plot of ' + emotion_selector + ' in '+ social_selector + ' '+ ways + ' data over time ')
-    if social_selector == 'Facebook': social_selector='fb'
-    elif social_selector == 'Reddit': social_selector='rd'
-    elif social_selector == 'Twitter': social_selector='tw'
-    elif social_selector == 'All': social_selector='all'
-    st.image('images/{}_{}_{}.png'.format(social_selector, ways.lower(), emotion_selector.lower()))
+    box_emotion_1.markdown('_Box plot showing intensity of ' + str.lower(emotion_selector) + ' in '+ social_selector + ' post around '+ str.lower(event_selector) + ' over time_')
+    if social_selector == 'Facebook': social_selector_naming='fb'
+    elif social_selector == 'Reddit': social_selector_naming='rd'
+    elif social_selector == 'Twitter': social_selector_naming='tw'
+    box_emotion_1.image('images/{}_{}_{}.png'.format(social_selector_naming, event_selector.lower().replace(' fraud', ''), emotion_selector.lower()))
 
 with box_emotion_2:
-    st.markdown('<p style=font-weight:bold;font-size:3rem;color:grey;>{}<p>'.format(emotion_selector.upper()), unsafe_allow_html=True)
-    st.markdown('TO DO: Explain what\'s going on in the boxplot')
-    st.markdown('<p style=font-weight:bold;font-size:1rem;color:grey;> Ramdomly pick post with {} emotion before {} <p>'.format(emotion_selector.upper(), ways.lower()), unsafe_allow_html=True)
-    post_before = df_insurrection_before_all[df_insurrection_before_all['highest_emotion']==emotion_selector.lower()].sample()
+    box_emotion_2.markdown('<p style=font-weight:bold;font-size:1.5rem;>{}<p>'.format(emotion_selector.upper()), unsafe_allow_html=True)
+    box_emotion_2.markdown('TO DO: Explain what\'s going on in the boxplot')
+
+emotion_container.markdown('##### Sample post from {} that contains an emotion of {}'.format(social_selector, emotion_selector.upper()))
+emotion_container.write("<style>.post-sample{background: #eaeaea; padding: 10px; border: 1px solid #eaeaea; border-radius: 10px; margin-bottom: 10px} </style>", unsafe_allow_html=True)
+sample_1, sample_space, sample_2 = emotion_container.columns((1, 0.1, 1))
+
+if social_selector == "Facebook":
+    logo = "https://img.icons8.com/color/48/000000/facebook-new.png"
+    post_before = df_facebook_before[df_facebook_before['highest_emotion']==emotion_selector.lower()].sample()
+    post_after = df_facebook_after[df_facebook_after['highest_emotion']==emotion_selector.lower()].sample()
+
+elif social_selector == "Twitter":
+    logo = "https://maxcdn.icons8.com/Color/PNG/48/Social_Networks/twitter-48.png"
+    post_before = df_twitter_before[df_twitter_before['highest_emotion']==emotion_selector.lower()].sample()
+    post_after = df_twitter_after[df_twitter_after['highest_emotion']==emotion_selector.lower()].sample()
+
+elif social_selector == "Reddit":
+    logo = "https://img.icons8.com/doodle/48/000000/reddit--v4.png"
+    post_before = df_reddit_before[df_reddit_before['highest_emotion']==emotion_selector.lower()].sample()
+    post_after = df_facebook_after[df_twitter_after['highest_emotion']==emotion_selector.lower()].sample()
+
+
+with sample_1:
+    sample_1.markdown('<p style=font-weight:bold;font-size:1rem;color:grey;> Sample post with emotion of {} before the {} <p>'.format(emotion_selector.upper(), event_selector.lower().replace(' fraud', '')), unsafe_allow_html=True)
     post_before_text = post_before['text'].values[0]
     post_before_user = post_before['author_id'].values[0]
-    st.markdown(post_before_user + ':')
-    st.markdown(post_before_text)
-    st.markdown('<p style=font-weight:bold;font-size:1rem;color:grey;> Ramdomly pick post with {} emotion after {} <p>'.format(emotion_selector.upper(), ways.lower()), unsafe_allow_html=True)
-    post_after = df_insurrection_after_all[df_insurrection_after_all['highest_emotion']==emotion_selector.lower()].sample()
+    sample_1.image(logo)
+    sample_1.markdown('**'+post_before_user + '**:')
+    sample_1.write("<div class = '{}-post post-sample'><p>"+post_before_text+"</p></div>".format(social_selector), unsafe_allow_html=True)
+with sample_2:
+    sample_2.markdown('<p style=font-weight:bold;font-size:1rem;color:grey;> Sample post with emotion of {} after the {} <p>'.format(emotion_selector.upper(), event_selector.lower().replace(' fraud', '')), unsafe_allow_html=True)
     post_after_text = post_after['text'].values[0]
     post_after_user = post_after['author_id'].values[0]
-    st.markdown(post_after_user + ':')
-    st.markdown(post_after_text)
-    # if social_selector == 'all' and emotion_selector.lower() == 'sadness':
+    sample_2.image(logo)
+    sample_2.markdown('**'+post_after_user + '**:')
+    sample_2.write("<div class = '{}-post post-sample'><p>"+post_after_text+"</p></div>".format(social_selector), unsafe_allow_html=True)
