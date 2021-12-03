@@ -193,7 +193,7 @@ st.line_chart(df_linechart)
 
 # LINECHART DESCRIPTOR
 
-st.markdown('In general, Twitter generated the most content and had an increasing number of posts over time, followed by a peak in content just before the Jan 6 insurrection. The number of posts between Facebook and Reddit throughout the election over time remained similar, but in the days before the insurrection, the number of posts in Facebook increased while the number of posts in Reddit decreased.')
+st.markdown('In general, Twitter generated the most content and had an increasing number of posts over time around these topics, followed by a peak in content just before the Jan 6 insurrection. The number of posts between Facebook and Reddit throughout the election over time remained similar, but they peaked during the day of the insurrection (for Facebook), and the following day in Reddit decreased. We see that discourse for election fraud started materializing only after the election itself, while talks of the insurrection started from way before and peaked on the D-day')
 
 # SLIDER
 
@@ -275,7 +275,7 @@ if choose == "Facebook":
 elif choose == "Reddit":
     time_container.markdown('Top posting accounts in Reddit consists of a lot of bots and some right-wing trolls. A good percentage of these accounts are currently suspended.')
 else:
-    time_container.markdown('Top posting accounts from Twitter are patriots and sock puppets.')
+    time_container.markdown('Top posting accounts from Twitter are self-styled patriots from both the right wing and the left wing, and some sock puppets that have since deleted their posts.')
 
 # Top keywords
 #stopwords = set(STOPWORDS)
@@ -472,7 +472,7 @@ if flag:
 
     time_container.plotly_chart(fig)
 
-    time_container.markdown('With the map, we visualize the concentration of geo-tagged posts. During the events studied, the geotagged posts mainly come from the states of Texas, California, Florida and New York.')
+    time_container.markdown('With the map, we visualize the concentration of geo-tagged posts. During the events studied, the geotagged posts mainly come from the states of California, Florida, Texas and New York. This aligned with the general population numbers - those are top 4 states in terms of population. An interesting thing to analyze here is that people in Florida seems to be more active in tweeting in this discourse than its supposed proportion in population - they have less people than Texas, yet they tweet more.') 
 
 else:
     time_container.markdown('##### Geographic concentration of posts')
@@ -542,7 +542,7 @@ if event_selector == 'Insurrection':
         elif social_selector == 'Reddit':
             box_posneg_2.markdown('In the discourse around insurrection, the sentiments kept are increasingly positive from Dec. 31, 2020 to Jan. 6, 2021, the day of  insurrection. The total messages related to insurrection increased 550%, which led to highest peak of sentiments on the day of insurrection. The positive sentiment decrease from 35% to 33% and the negative sentiment increase from 33.3% to 52%.')
         elif social_selector == 'Twitter':
-            box_posneg_2.markdown('The total messages related to insurrection increased 303%, which led to highest peak of sentiments on the day of insurrection. The positive sentiment decrease from 40.7% to 32% and the negative sentiment increase from 44.07% to 51.2%.')            
+            box_posneg_2.markdown('The total messages related to insurrection increased 303%, which led to highest peak of sentiments on the day of insurrection. The positive sentiment decrease from 40.7% to 32% and the negative sentiment increase from 44.07% to 51.2%.')
 
 elif event_selector == 'Election Fraud':
     with box_posneg_1:
@@ -600,7 +600,7 @@ elif event_selector == 'Election Fraud':
         elif social_selector == 'Reddit':
             box_posneg_2.markdown('After the election, the sentiments of the discourse related to election skyrocketed. The sentiment 942% from Oct. 31, 2020 to Nov. 5, 2020. The highest peak is on Nov 5, 2020.')
         elif social_selector == 'Twitter':
-            box_posneg_2.markdown('After the election, the sentiments of the discourse related to election skyrocketed. The sentiment increased 1982% from Oct. 31, 2020 to Nov. 5, 2020. The highest peak is on Nov 5, 2020.')          
+            box_posneg_2.markdown('After the election, the sentiments of the discourse related to election skyrocketed. The sentiment increased 1982% from Oct. 31, 2020 to Nov. 5, 2020. The highest peak is on Nov 5, 2020.')
 
 
 
@@ -755,14 +755,14 @@ with box_emotion_1:
 with box_emotion_2:
     box_emotion_2.markdown('<p style=font-weight:bold;font-size:1.5rem;>{}<p>'.format(emotion_selector.upper()), unsafe_allow_html=True)
     if event_selector == 'Insurrection':
-        if social_selector == 'Facebook': 
+        if social_selector == 'Facebook':
             box_emotion_2.markdown('Disgust and anger increases after the insurrection. Sadness, joy and fear peaked on the day of insurrection.')
         elif social_selector == 'Reddit':
             box_emotion_2.markdown('Disgust and Anger increases after the insurrection; Joy and Fear decreases after the insurrection; the intensity of Sadness remains constant.')
         elif social_selector == 'Twitter':
             box_emotion_2.markdown('Disgust and Anger intensifies after the insurrection; Joy and Fear decreases after the insurrection; the intensity of Sadness remains constant.')
     elif event_selector == 'Election Fraud':
-        if social_selector == 'Facebook': 
+        if social_selector == 'Facebook':
             box_emotion_2.markdown('Disgust and Anger intensifies after the election; Joy peaked on the day of the elections; Sadness and Anger decreases in intensity after the election.')
         elif social_selector == 'Reddit':
             box_emotion_2.markdown('Disgust and Joy intensifies after the election; Anger peaked the day before the election but plunged on the day of the election; Fear decreases after the election while the intensity of sadness remained the same.')
