@@ -193,7 +193,7 @@ st.line_chart(df_linechart)
 
 # LINECHART DESCRIPTOR
 
-st.markdown('Talk about numbers, then which source generated the most content bla bla bla, Facebook peaks where, and desc of trend Twitter peaks where and desc of trend Reddit peaks where')
+st.markdown('In general, Twitter generated the most content and had an increasing number of posts over time, followed by a peak in content just before the Jan 6 insurrection. The number of posts between Facebook and Reddit throughout the election over time remained similar, but in the days before the insurrection, the number of posts in Facebook increased while the number of posts in Reddit decreased.')
 
 # SLIDER
 
@@ -217,7 +217,7 @@ geo_before_df = pd.read_csv('./data/before_with_places_ext.csv')
 st.markdown("""---""")
 time_container = st.container()
 time_container.markdown('### Discourse over time')
-time_container.markdown('In this section we can see deeper on what happened with the discourse over time: seeing top posting accounts and keywords over the period of time, and for geo-tagged Twitter data, we can see where the discourse are concentrated on')
+time_container.markdown('In this section, we explore the top posting accounts and keywords over time. We also explore the regions in which geo-tagged discourse are concentrated on.')
 
 choose=time_container.radio("Social media filter",("Facebook","Reddit","Twitter"), index=2)
 
@@ -271,11 +271,11 @@ time_container.altair_chart(author_bars, use_container_width = True)
 
 
 if choose == "Facebook":
-    time_container.markdown('In this section we can see top posting accounts across time periods. Facebook a lot of Trump-supporting community page ')
+    time_container.markdown('Top posting accounts in Facebook contains many community pages in support of Trump.')
 elif choose == "Reddit":
-    time_container.markdown('In this section we can see top posting accounts across time periods. Reddit a lot of bots, some right-wing trolls that are suspended')
+    time_container.markdown('Top posting accounts in Reddit consists of a lot of bots and some right-wing trolls. A good percentage of these accounts are currently suspended.')
 else:
-    time_container.markdown('In this section we can see top posting accounts across time periods. Twitter suspicious, sock puppets')
+    time_container.markdown('Top posting accounts from Twitter are patriots and sock puppets.')
 
 # Top keywords
 #stopwords = set(STOPWORDS)
@@ -330,7 +330,7 @@ text = text_bars.mark_text(
 time_container.markdown('##### Top terms in posts')
 time_container.altair_chart(text_bars, use_container_width = True)
 
-time_container.markdown('In this section we can see top posting accounts across time periods. Twitter ')
+#time_container.markdown('In this section we can see top posting accounts across time periods. Twitter ')
 
 us_state_to_abbrev = {
     "Alabama": "AL",
@@ -472,7 +472,7 @@ if flag:
 
     time_container.plotly_chart(fig)
 
-    time_container.markdown('In this section we can see where the concentration of Twitter posts come from based on tweets that have geolocation tag on them')
+    time_container.markdown('With the map, we visualize the concentration of geo-tagged posts. During the events studied, the geotagged posts mainly come from the states of Texas, California, Florida and New York.')
 
 else:
     time_container.markdown('##### Geographic concentration of posts')
@@ -482,7 +482,7 @@ st.markdown("""---""")
 
 emotion_container = st.container()
 emotion_container.markdown('### Emotions in discourse')
-emotion_container.markdown('In this section we can explore the emotions that are present in the discourse over time: share of positive vs negative sentiments, how the posts fit in the 5 basic human emotions (sadness, joy, disgust, anger and fear) and sample post that fit each emotion in the discourse')
+emotion_container.markdown('We next explore emotions that are present in the discourse over time: the share of positive vs negative sentiments; and the dominant emotion (sadness, joy, disgust, anger and fear) in each post.')
 social_selector=emotion_container.radio("Social media filter",("Facebook","Reddit","Twitter"), index=2, key = "socialselectemo")
 emotion_container.markdown('##### Sentiments over time')
 
@@ -537,7 +537,12 @@ if event_selector == 'Insurrection':
             box_posneg_1.bar_chart(df_stack)
             df_stack.plot.bar(stacked=True)
     with box_posneg_2:
-        box_posneg_2.markdown('In the discourse around insurrection, we see that sentiment are mostly X and we see there\'s a turning point in x because of abc bla bla bla ')
+        if social_selector == 'Facebook':
+            box_posneg_2.markdown('In the discourse around insurrection, the sentiments kept are increasingly positive from Dec. 31, 2020 to Jan. 5, 2021, the day before insurrection. The total messages related to insurrection increased 240%, which led to highest peak of sentiments on the day before insurrection. The positive sentiment decrease from 57.8% to 51.9% and the negative sentiment increase from 29.7% to 32.5%.')
+        elif social_selector == 'Reddit':
+            box_posneg_2.markdown('In the discourse around insurrection, the sentiments kept are increasingly positive from Dec. 31, 2020 to Jan. 6, 2021, the day of  insurrection. The total messages related to insurrection increased 550%, which led to highest peak of sentiments on the day of insurrection. The positive sentiment decrease from 35% to 33% and the negative sentiment increase from 33.3% to 52%.')
+        elif social_selector == 'Twitter':
+            box_posneg_2.markdown('The total messages related to insurrection increased 303%, which led to highest peak of sentiments on the day of insurrection. The positive sentiment decrease from 40.7% to 32% and the negative sentiment increase from 44.07% to 51.2%.')            
 
 elif event_selector == 'Election Fraud':
     with box_posneg_1:
@@ -590,7 +595,12 @@ elif event_selector == 'Election Fraud':
             box_posneg_1.bar_chart(df_stack)
             df_stack.plot.bar(stacked=True)
     with box_posneg_2:
-        box_posneg_2.markdown('In the discourse around election fraud, we see that sentiment are mostly X and we see there\'s a turning point in x because of abc bla bla bla ')
+        if social_selector == 'Facebook':
+            box_posneg_2.markdown('After the election, the sentiments of the discourse related to election skyrocketed. The sentiment increased 1744% from Oct. 31, 2020 to Nov. 5, 2020. The highest peak is on Nov 5, 2020.')
+        elif social_selector == 'Reddit':
+            box_posneg_2.markdown('After the election, the sentiments of the discourse related to election skyrocketed. The sentiment 942% from Oct. 31, 2020 to Nov. 5, 2020. The highest peak is on Nov 5, 2020.')
+        elif social_selector == 'Twitter':
+            box_posneg_2.markdown('After the election, the sentiments of the discourse related to election skyrocketed. The sentiment increased 1982% from Oct. 31, 2020 to Nov. 5, 2020. The highest peak is on Nov 5, 2020.')          
 
 
 
@@ -645,7 +655,7 @@ if event_selector == 'Insurrection':
 
 
     with box_emotion_up_2:
-        box_emotion_up_2.markdown('The dominating emotion on the insurrection discourse is disgust, bla bla bla')
+        box_emotion_up_2.markdown('The dominating emotion on social media discourse is disgust, leading to an inference that people turn to social media to voice their discontent.')
     if social_selector == 'Facebook':
         df_stack = pd.DataFrame({'sadness': df_facebook_all['emotion.sadness'].tolist(),'anger': df_facebook_all['emotion.anger'].tolist(),'disgust': df_facebook_all['emotion.disgust'].tolist(),'joy': df_facebook_all['emotion.joy'].tolist(),'fear': df_facebook_all['emotion.fear'].tolist(), 'date':df_facebook_all['date_column'].tolist() })
         df_stack = df_stack.groupby('date').agg('sum')
@@ -707,7 +717,7 @@ elif event_selector == 'Election Fraud':
             box_emotion_up_1.altair_chart(emo_bars, use_container_width = True)
 
     with box_emotion_up_2:
-        box_emotion_up_2.markdown('The dominating emotion on the election discourse is disgust, bla bla bla')
+        box_emotion_up_2.markdown('The dominating emotion on social media discourse is disgust, leading to an inference that people turn to social media to voice their discontent.')
     if social_selector == 'Facebook':
         df_stack = pd.DataFrame({'sadness': df_facebook_all_election['emotion.sadness'].tolist(),'anger': df_facebook_all_election['emotion.anger'].tolist(),'disgust': df_facebook_all_election['emotion.disgust'].tolist(),'joy': df_facebook_all_election['emotion.joy'].tolist(),'fear': df_facebook_all_election['emotion.fear'].tolist(), 'date':df_facebook_all_election['date_column'].tolist() })
         df_stack = df_stack.groupby('date').agg('sum')
@@ -726,7 +736,7 @@ elif event_selector == 'Election Fraud':
 
 
 emotion_container.markdown('##### Intensity of emotions over time')
-emotion_container.markdown('In this section we can explore how intense are the emotions over the course of the discourse')
+emotion_container.markdown('In this section we explore the intensity of the emotions over the course of the discourse in the selected event.')
 
 emotion_selector = emotion_container.radio("Pick an emotion you want to focus on", ('Sadness', 'Anger', 'Disgust', 'Fear', 'Joy'))
 
@@ -744,7 +754,21 @@ with box_emotion_1:
 
 with box_emotion_2:
     box_emotion_2.markdown('<p style=font-weight:bold;font-size:1.5rem;>{}<p>'.format(emotion_selector.upper()), unsafe_allow_html=True)
-    box_emotion_2.markdown('TO DO: Explain what\'s going on in the boxplot')
+    if event_selector == 'Insurrection':
+        if social_selector == 'Facebook': 
+            box_emotion_2.markdown('Disgust and anger increases after the insurrection. Sadness, joy and fear peaked on the day of insurrection.')
+        elif social_selector == 'Reddit':
+            box_emotion_2.markdown('Disgust and Anger increases after the insurrection; Joy and Fear decreases after the insurrection; the intensity of Sadness remains constant.')
+        elif social_selector == 'Twitter':
+            box_emotion_2.markdown('Disgust and Anger intensifies after the insurrection; Joy and Fear decreases after the insurrection; the intensity of Sadness remains constant.')
+    elif event_selector == 'Election Fraud':
+        if social_selector == 'Facebook': 
+            box_emotion_2.markdown('Disgust and Anger intensifies after the election; Joy peaked on the day of the elections; Sadness and Anger decreases in intensity after the election.')
+        elif social_selector == 'Reddit':
+            box_emotion_2.markdown('Disgust and Joy intensifies after the election; Anger peaked the day before the election but plunged on the day of the election; Fear decreases after the election while the intensity of sadness remained the same.')
+        elif social_selector == 'Twitter':
+            box_emotion_2.markdown('Disgust and Anger increases after the election; Sadness, Joy and Fear decreased in intensity after the election.')
+
 
 emotion_container.markdown('##### Sample post from {} that contains an emotion of {}'.format(social_selector, emotion_selector.upper()))
 emotion_container.write("<style>.post-sample{background: #eaeaea; padding: 10px; border: 1px solid #eaeaea; border-radius: 10px; margin-bottom: 10px} </style>", unsafe_allow_html=True)
