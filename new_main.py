@@ -332,9 +332,6 @@ time_container.altair_chart(text_bars, use_container_width = True)
 
 time_container.markdown('In this section we can see top posting accounts across time periods. Twitter ')
 
-
-
-
 us_state_to_abbrev = {
     "Alabama": "AL",
     "Alaska": "AK",
@@ -397,6 +394,8 @@ us_state_to_abbrev = {
 
 inverted_us_state = dict(map(reversed, us_state_to_abbrev.items()))
 
+
+
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2011_us_ag_exports.csv')
 
 for col in df.columns:
@@ -407,34 +406,77 @@ df['text'] = df['state'] + '<br>' + \
     'Fruits ' + df['total fruits'] + ' Veggies ' + df['total veggies'] + '<br>' + \
     'Wheat ' + df['wheat'] + ' Corn ' + df['corn']
 
+if choose == 'Twitter':
+    flag = True
+else:
+    flag = False
 
-df_twitter_after_insurrection = pd.read_csv('./data/twitter_after_insurrection.csv')
+
+if event_selector == 'Insurrection':
+    df_twitter_before_ext = pd.read_csv('./data/after_with_places_ext.csv')
+    df_twitter_after_ext = pd.read_csv('./data/before_with_places_ext.csv')
+
+elif event_selector == 'Election Fraud':
+    df_twitter_before_ext = pd.read_csv('./data/after_with_places_ext_election.csv')
+    df_twitter_after_ext = pd.read_csv('./data/before_with_places_ext_election.csv')
+
+if flag:
+    df_tw_geo = pd.concat([df_twitter_before_ext[['id','created_at_x','place_type','country','name','full_name']],df_twitter_after_ext[['id','created_at_x','place_type','country','name','full_name']]])
 
 
-fig = go.Figure(data=go.Choropleth(
-    locations=df['code'],
-    z=df['total exports'].astype(float),
-    locationmode='USA-states',
-    colorscale='Reds',
-    autocolorscale=False,
-    text=df['text'], # hover text
-    marker_line_color='white', # line markers between states
-    colorbar_title="Millions USD"
-))
+    df_tw_geo[DATE_COLUMN] = df_tw_geo['created_at_x'].apply(lambda x: x.replace('+00:00', ''))
+    df_tw_geo[DATE_COLUMN] = pd.to_datetime(df_tw_geo[DATE_COLUMN])
+    date_mask = (df_tw_geo[DATE_COLUMN].dt.date >= date_filter[0]) & (df_tw_geo[DATE_COLUMN].dt.date <= date_filter[1])
+    df_tw_geo = df_tw_geo[date_mask]
 
-fig.update_layout(
-    title_text='Discourse in US States',
-    geo = dict(
-        scope='usa',
-        projection=go.layout.geo.Projection(type = 'albers usa'),
-        showlakes=True, # lakes
-        lakecolor='rgb(255, 255, 255)'),
-)
-time_container.markdown('##### Geographic concentration of posts')
+    df_tw_geo = df_tw_geo[df_tw_geo['country'] == 'United States']
 
-time_container.plotly_chart(fig)
+    #process state column from cities
+    df_tw_geo_citystate = df_tw_geo[df_tw_geo['place_type']=='city']
+    df_tw_geo_adminstate = df_tw_geo[df_tw_geo['place_type']=='admin']
 
-time_container.markdown('In this section we can see where the concentration of Twitter posts come from based on tweets that have geolocation tag on them')
+    df_tw_geo_citystate['state_abbrev'] = df_tw_geo_citystate['full_name'].str.split(',').str[1].str.strip()
+    df_tw_geo_adminstate['state_name'] = df_tw_geo_adminstate['name'].copy()
+    df_tw_geo_citystate['state_name'] = df_tw_geo_citystate['state_abbrev'].map(inverted_us_state)
+    df_tw_geo_adminstate['state_abbrev'] = df_tw_geo_adminstate['state_name'].map(us_state_to_abbrev)
+    df_tw_geo_citystate['state_name'] = df_tw_geo_citystate['state_abbrev'].map(inverted_us_state)
+
+    df_tw_geo = pd.concat([df_tw_geo_adminstate,df_tw_geo_citystate])
+
+    #st.write(df_tw_geo)
+
+    top_states = df_tw_geo.groupby(df_tw_geo['state_abbrev']).count().drop(columns=[DATE_COLUMN,'place_type','name','full_name','created_at_x','state_name','country']).reset_index().sort_values(by=['id'], ascending = False)
+
+    #st.write(top_states)
+
+
+    fig = go.Figure(data=go.Choropleth(
+        locations=top_states['state_abbrev'],
+        z=top_states['id'].astype(int),
+        locationmode='USA-states',
+        colorscale='Reds',
+        autocolorscale=False, # hover text
+        marker_line_color='white', # line markers between states
+        colorbar_title="# of Tweets"
+    ))
+
+    fig.update_layout(
+        title_text='Discourse in US States',
+        geo = dict(
+            scope='usa',
+            projection=go.layout.geo.Projection(type = 'albers usa'),
+            showlakes=True, # lakes
+            lakecolor='rgb(255, 255, 255)'),
+    )
+    time_container.markdown('##### Geographic concentration of posts')
+
+    time_container.plotly_chart(fig)
+
+    time_container.markdown('In this section we can see where the concentration of Twitter posts come from based on tweets that have geolocation tag on them')
+
+else:
+    time_container.markdown('##### Geographic concentration of posts')
+    time_container.warning('Geotagged data are only available in the Twitter dataset')
 
 st.markdown("""---""")
 
@@ -622,20 +664,47 @@ if event_selector == 'Insurrection':
 elif event_selector == 'Election Fraud':
     with box_emotion_up_1:
         if social_selector == 'Facebook':
-            df_emo = pd.DataFrame(df_facebook_all_election['highest_emotion'].value_counts())
-            # fig=px.bar(df_emo, orientation='h')
-            # st.write(fig)
-            box_emotion_up_1.bar_chart(df_emo)
+            df_emo = pd.DataFrame(df_facebook_all_election['highest_emotion'].value_counts()).reset_index()
+            df_emo.columns = ['emotions', 'frequency']
+            df_emo['color'] = ['#c489be','#4317aa','#452a49','#686860','#54a24b']
+
+
+            emo_bars = alt.Chart(df_emo).mark_bar().encode(
+                x=alt.X('frequency', axis=alt.Axis(title='Frequency')),
+                y=alt.Y('emotions', axis=alt.Axis(title='Terms'), sort='-x'),
+                        color=alt.Color('color', scale=None)
+            )
+
+
+            box_emotion_up_1.altair_chart(emo_bars, use_container_width = True)
         elif social_selector == 'Reddit':
-            df_emo = pd.DataFrame(df_reddit_all_election['highest_emotion'].value_counts())
-            # fig=px.bar(df_emo, orientation='h')
-            # st.write(fig)
-            box_emotion_up_1.bar_chart(df_emo)
+            df_emo = pd.DataFrame(df_reddit_all_election['highest_emotion'].value_counts()).reset_index()
+            df_emo.columns = ['emotions', 'frequency']
+            df_emo['color'] = ['#c489be','#4317aa','#452a49','#686860','#54a24b']
+
+
+            emo_bars = alt.Chart(df_emo).mark_bar().encode(
+                x=alt.X('frequency', axis=alt.Axis(title='Frequency')),
+                y=alt.Y('emotions', axis=alt.Axis(title='Terms'), sort='-x'),
+                        color=alt.Color('color', scale=None)
+            )
+
+
+            box_emotion_up_1.altair_chart(emo_bars, use_container_width = True)
         elif social_selector == 'Twitter':
-            df_emo = pd.DataFrame(df_twitter_all_election['highest_emotion'].value_counts())
-            # fig=px.bar(df_emo, orientation='h')
-            # st.write(fig)
-            box_emotion_up_1.bar_chart(df_emo)
+            df_emo = pd.DataFrame(df_reddit_all_election['highest_emotion'].value_counts()).reset_index()
+            df_emo.columns = ['emotions', 'frequency']
+            df_emo['color'] = ['#c489be','#4317aa','#452a49','#686860','#54a24b']
+
+
+            emo_bars = alt.Chart(df_emo).mark_bar().encode(
+                x=alt.X('frequency', axis=alt.Axis(title='Frequency')),
+                y=alt.Y('emotions', axis=alt.Axis(title='Terms'), sort='-x'),
+                        color=alt.Color('color', scale=None)
+            )
+
+
+            box_emotion_up_1.altair_chart(emo_bars, use_container_width = True)
 
     with box_emotion_up_2:
         box_emotion_up_2.markdown('The dominating emotion on the election discourse is disgust, bla bla bla')
