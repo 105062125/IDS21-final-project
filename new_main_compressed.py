@@ -39,17 +39,17 @@ DATE_COLUMN = 'created_at'
 @st.cache(allow_output_mutation=True)
 def load_data():
 
-    with open('facebook_before_insurrection.pkl', 'rb') as f:
+    with open('./data/facebook_before_insurrection.pkl', 'rb') as f:
         df_facebook_before_insurrection = pickle.load(f)
-    with open('facebook_after_insurrection.pkl', 'rb') as f:
+    with open('./data/facebook_after_insurrection.pkl', 'rb') as f:
         df_facebook_after_insurrection = pickle.load(f)
-    with open('reddit_before_insurrection.pkl', 'rb') as f:
+    with open('./data/reddit_before_insurrection.pkl', 'rb') as f:
         df_reddit_before_insurrection = pickle.load(f)
-    with open('reddit_after_insurrection.pkl', 'rb') as f:
+    with open('./data/reddit_after_insurrection.pkl', 'rb') as f:
         df_reddit_after_insurrection = pickle.load(f)
-    with open('twitter_before_insurrection.pkl', 'rb') as f:
+    with open('./data/twitter_before_insurrection.pkl', 'rb') as f:
         df_twitter_before_insurrection = pickle.load(f)
-    with open('twitter_after_insurrection.pkl', 'rb') as f:
+    with open('./data/twitter_after_insurrection.pkl', 'rb') as f:
         df_twitter_after_insurrection = pickle.load(f)
 
     df_facebook_all = pd.concat([df_facebook_before_insurrection, df_facebook_after_insurrection])
@@ -69,17 +69,17 @@ def load_data():
 @st.cache
 def load_data2():
 
-    with open('facebook_before_election.pkl', 'rb') as f:
+    with open('./data/facebook_before_election.pkl', 'rb') as f:
         df_facebook_before_election = pickle.load(f)
-    with open('facebook_after_election.pkl', 'rb') as f:
+    with open('./data/facebook_after_election.pkl', 'rb') as f:
         df_facebook_after_election = pickle.load(f)
-    with open('reddit_before_election.pkl', 'rb') as f:
+    with open('./data/reddit_before_election.pkl', 'rb') as f:
         df_reddit_before_election = pickle.load(f)
-    with open('reddit_after_election.pkl', 'rb') as f:
+    with open('./data/reddit_after_election.pkl', 'rb') as f:
         df_reddit_after_election = pickle.load(f)
-    with open('twitter_before_election.pkl', 'rb') as f:
+    with open('./data/twitter_before_election.pkl', 'rb') as f:
         df_twitter_before_election = pickle.load(f)
-    with open('twitter_after_election.pkl', 'rb') as f:
+    with open('./data/twitter_after_election.pkl', 'rb') as f:
         df_twitter_after_election = pickle.load(f)
 
     df_election_before_all = pd.concat([df_facebook_before_election, df_reddit_before_election, df_twitter_before_election])
