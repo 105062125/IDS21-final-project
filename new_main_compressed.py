@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from plotly import graph_objs as go
 from wordcloud import WordCloud, STOPWORDS
 import re
+import pickle
+
 # import pydeck as pdk
 import plotly.graph_objects as go
 import plotly.express as px
@@ -37,12 +39,18 @@ DATE_COLUMN = 'created_at'
 @st.cache(allow_output_mutation=True)
 def load_data():
 
-    df_facebook_before_insurrection = pd.read_csv('./data/facebook_before_insurrection.csv')
-    df_facebook_after_insurrection = pd.read_csv('./data/facebook_after_insurrection.csv')
-    df_reddit_before_insurrection = pd.read_csv('./data/reddit_before_insurrection.csv')
-    df_reddit_after_insurrection = pd.read_csv('./data/reddit_after_insurrection.csv')
-    df_twitter_before_insurrection = pd.read_csv('./data/twitter_before_insurrection.csv')
-    df_twitter_after_insurrection = pd.read_csv('./data/twitter_after_insurrection.csv')
+    with open('facebook_before_insurrection.pkl', 'rb') as f:
+        df_facebook_before_insurrection = pickle.load(f)
+    with open('facebook_after_insurrection.pkl', 'rb') as f:
+        df_facebook_after_insurrection = pickle.load(f)
+    with open('reddit_before_insurrection.pkl', 'rb') as f:
+        df_reddit_before_insurrection = pickle.load(f)
+    with open('reddit_after_insurrection.pkl', 'rb') as f:
+        df_reddit_after_insurrection = pickle.load(f)
+    with open('twitter_before_insurrection.pkl', 'rb') as f:
+        df_twitter_before_insurrection = pickle.load(f)
+    with open('twitter_after_insurrection.pkl', 'rb') as f:
+        df_twitter_after_insurrection = pickle.load(f)
 
     df_facebook_all = pd.concat([df_facebook_before_insurrection, df_facebook_after_insurrection])
     df_facebook_all['date_column'] = pd.to_datetime(df_facebook_all['created_at']).dt.date
@@ -61,12 +69,18 @@ def load_data():
 @st.cache
 def load_data2():
 
-    df_facebook_before_election = pd.read_csv('./data/facebook_before_election.csv')
-    df_facebook_after_election = pd.read_csv('./data/facebook_after_election.csv')
-    df_reddit_before_election = pd.read_csv('./data/reddit_before_election.csv')
-    df_reddit_after_election = pd.read_csv('./data/reddit_after_election.csv')
-    df_twitter_before_election = pd.read_csv('./data/twitter_before_election.csv')
-    df_twitter_after_election = pd.read_csv('./data/twitter_after_election.csv')
+    with open('facebook_before_election.pkl', 'rb') as f:
+        df_facebook_before_election = pickle.load(f)
+    with open('facebook_after_election.pkl', 'rb') as f:
+        df_facebook_after_election = pickle.load(f)
+    with open('reddit_before_election.pkl', 'rb') as f:
+        df_reddit_before_election = pickle.load(f)
+    with open('reddit_after_election.pkl', 'rb') as f:
+        df_reddit_after_election = pickle.load(f)
+    with open('twitter_before_election.pkl', 'rb') as f:
+        df_twitter_before_election = pickle.load(f)
+    with open('twitter_after_election.pkl', 'rb') as f:
+        df_twitter_after_election = pickle.load(f)
 
     df_election_before_all = pd.concat([df_facebook_before_election, df_reddit_before_election, df_twitter_before_election])
     df_election_after_all = pd.concat([df_facebook_after_election, df_reddit_after_election, df_twitter_after_election])
