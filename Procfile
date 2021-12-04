@@ -1,1 +1,0 @@
-web: sh setup.sh && streamlit run deploy_heroku_kevin.py
