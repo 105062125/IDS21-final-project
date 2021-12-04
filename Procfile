@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run new_main.py
+web: sh setup.sh && streamlit run deploy_heroku_kevin.py
