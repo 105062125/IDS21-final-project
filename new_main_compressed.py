@@ -309,8 +309,9 @@ df_content = df_content[date_mask]
 stopwords = set(STOPWORDS)
 stopwords.update(["https", "t", "co", "let", "will", "s", "use", "take", "used", "people", "said",
             "say", "wasnt", "go", "well", "thing", "amp", "put", "&", "even", "Yet"])
-word_cleaning = ' '.join(text for text in df_content['text'])
+word_cleaning = ' '.join(text for text in df_content['text'].sample(n=5000, replace=True, random_state=1))
 word_cleaning = re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",word_cleaning)
+
 
 wordcloud = WordCloud(stopwords=stopwords, max_words=10, width=800, height=400).generate(word_cleaning)
 topwords_dict = wordcloud.words_
