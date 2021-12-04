@@ -9,6 +9,7 @@ from plotly import graph_objs as go
 from wordcloud import WordCloud, STOPWORDS
 import re
 import pickle
+import gc
 
 # import pydeck as pdk
 import plotly.graph_objects as go
@@ -120,16 +121,15 @@ with btn_col1:
 with btn_col2:
     insurrection_btn = st.write('<div class = "story-container"><h3>2021 United States Capitol Insurrection</h3><p>On January 6, 2021, a mob of supporters of then-President Trump attacked the United States Capitol after a rally the president held, seeking to overturn the Congress session that would formalize the Democratic victory in the 2020 US Presidential Election.</p><span class = "caption">Hashtags used to capture this phenomenon</span><p>#magacivilwar #marchfortrump #millionmagamarch #saveamerica #stopthesteal #stopthefraud</p></div>', unsafe_allow_html=True)
 
-
-df_facebook_all, df_reddit_all, df_twitter_all, df_all, df_insurrection_before_all, df_insurrection_after_all, df_facebook_before_insurrection, df_facebook_after_insurrection, df_reddit_before_insurrection, df_reddit_after_insurrection, df_twitter_before_insurrection, df_twitter_after_insurrection = load_data()
-df_facebook_before_election, df_facebook_after_election, df_reddit_before_election, df_reddit_after_election, df_twitter_before_election, df_twitter_after_election, df_facebook_all_election, df_reddit_all_election, df_twitter_all_election, df_all_election = load_data2()
-
 # df_facebook_all = pd.concat([df_facebook_before_insurrection, df_facebook_after_insurrection])
 # df_reddit_all = pd.concat([df_reddit_before_insurrection, df_reddit_after_insurrection])
 # df_twitter_all = pd.concat([df_twitter_before_insurrection, df_twitter_after_insurrection])
 
 event_selector=st.radio("Choose the topic you want to explore further",("Election Fraud", "Insurrection"))
 if event_selector == 'Election Fraud':
+    df_facebook_before_election, df_facebook_after_election, df_reddit_before_election, df_reddit_after_election, df_twitter_before_election, df_twitter_after_election, df_facebook_all_election, df_reddit_all_election, df_twitter_all_election, df_all_election = load_data2()
+
+
     df_facebook_before = df_facebook_before_election
     df_facebook_after = df_facebook_after_election
     df_reddit_before = df_reddit_before_election
@@ -137,6 +137,8 @@ if event_selector == 'Election Fraud':
     df_twitter_after = df_twitter_after_election
     df_twitter_before = df_twitter_before_election
 else:
+    df_facebook_all, df_reddit_all, df_twitter_all, df_all, df_insurrection_before_all, df_insurrection_after_all, df_facebook_before_insurrection, df_facebook_after_insurrection, df_reddit_before_insurrection, df_reddit_after_insurrection, df_twitter_before_insurrection, df_twitter_after_insurrection = load_data()
+
     df_facebook_before = df_facebook_before_insurrection
     df_facebook_after = df_facebook_after_insurrection
     df_reddit_before = df_reddit_before_insurrection
@@ -204,6 +206,8 @@ df_linechart = pd.DataFrame(data=data_linechart)
 df_linechart.set_index(['date'], inplace=True)
 
 st.line_chart(df_linechart)
+
+del df_fb_count, df_tw_count, df_rd_count
 
 # LINECHART DESCRIPTOR
 
@@ -309,7 +313,10 @@ df_content = df_content[date_mask]
 stopwords = set(STOPWORDS)
 stopwords.update(["https", "t", "co", "let", "will", "s", "use", "take", "used", "people", "said",
             "say", "wasnt", "go", "well", "thing", "amp", "put", "&", "even", "Yet"])
-word_cleaning = ' '.join(text for text in df_content['text'].sample(n=5000, replace=True, random_state=1))
+word_cleaning = ' '.join(text for text in df_content['text'].sample(n=1000, replace=True, random_state=1))
+
+del df_content
+
 word_cleaning = re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",word_cleaning)
 
 
@@ -337,6 +344,8 @@ text = text_bars.mark_text(
 
 time_container.markdown('##### Top terms in posts')
 time_container.altair_chart(text_bars, use_container_width = True)
+
+gc.collect()
 
 #time_container.markdown('In this section we can see top posting accounts across time periods. Twitter ')
 
@@ -443,6 +452,7 @@ if flag:
 
     df_tw_geo = pd.concat([df_tw_geo_adminstate,df_tw_geo_citystate])
 
+    del df_tw_geo_citystate, df_tw_geo_adminstate
     #st.write(df_tw_geo)
 
     top_states = df_tw_geo.groupby(df_tw_geo['state_abbrev']).count().drop(columns=[DATE_COLUMN,'place_type','name','full_name','created_at_x','state_name','country']).reset_index().sort_values(by=['id'], ascending = False)
@@ -742,8 +752,6 @@ emotion_selector = emotion_container.radio("Pick an emotion you want to focus on
 
 box_emotion_1, box_emotion_space, box_emotion_2 = emotion_container.columns((2, 0.1, 1))
 
-df_insurrection_before_all_len = len(df_insurrection_before_all)
-df_insurrection_after_all_len = len(df_insurrection_after_all)
 
 with box_emotion_1:
     box_emotion_1.markdown('_Box plot showing intensity of ' + str.lower(emotion_selector) + ' in '+ social_selector + ' post around '+ str.lower(event_selector) + ' over time_')
@@ -804,3 +812,6 @@ with sample_2:
     sample_2.image(logo)
     sample_2.markdown('**'+post_after_user + '**:')
     sample_2.write("<div class = '{}-post post-sample'><p>"+post_after_text+"</p></div>".format(social_selector), unsafe_allow_html=True)
+
+del df_facebook_after, df_facebook_before, df_reddit_before, df_reddit_after, df_twitter_before, df_twitter_after
+gc.collect()
