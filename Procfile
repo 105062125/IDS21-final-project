@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run new_main_compressed.py
+web: sh setup.sh && streamlit run new_main.py
