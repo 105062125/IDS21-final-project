@@ -53,3 +53,21 @@ with open('twitter_before_election.pkl', 'wb') as f:
 
 with open('twitter_after_election.pkl', 'wb') as f:
         pickle.dump(df_twitter_after_election, f)
+
+df_twitter_before_ext = pd.read_csv('./data/before_with_places_ext.csv')
+df_twitter_after_ext = pd.read_csv('./data/after_with_places_ext.csv')
+
+df_twitter_before_ext_el = pd.read_csv('./data/before_with_places_ext_election.csv')
+df_twitter_after_ext_el = pd.read_csv('./data/after_with_places_ext_election.csv')
+
+with open('before_with_places_ext.pkl', 'wb') as f:
+        pickle.dump(df_twitter_before_ext, f)
+
+with open('after_with_places_ext.pkl', 'wb') as f:
+        pickle.dump(df_twitter_after_ext, f)
+
+with open('before_with_places_ext_election.pkl', 'wb') as f:
+        pickle.dump(df_twitter_before_ext_el, f)
+
+with open('after_with_places_ext_election.pkl', 'wb') as f:
+        pickle.dump(df_twitter_after_ext_el, f)

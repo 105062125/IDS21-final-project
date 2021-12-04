@@ -224,15 +224,6 @@ st.write('<style>div[role=radiogroup]{background-color:#eaeaea;border-radius:10p
 
 date_format = 'YYYY-MM-DD'
 
-
-geo_after_df = pd.read_csv('./data/after_with_places_ext.csv')
-
-st.write(geo_after_df)
-
-geo_before_df = pd.read_csv('./data/before_with_places_ext.csv')
-
-st.write(geo_before_df)
-
 st.markdown("""---""")
 time_container = st.container()
 time_container.markdown('### Discourse over time')
@@ -241,9 +232,6 @@ time_container.markdown('In this section, we explore the top posting accounts an
 choose=time_container.radio("Social media filter",("Facebook","Reddit","Twitter"), index=2)
 
 date_filter = time_container.slider('Select date range', min_value=min_date, max_value=max_date, value=(min_date, max_date), format=date_format)
-
-geo_all=(pd.concat([geo_before_df,geo_after_df]))
-geo_all = geo_all[geo_all['country_code']=='US']
 
 if choose == "Facebook":
     df_author = pd.concat([df_facebook_before[['id','author_id',DATE_COLUMN]],df_facebook_after[['id','author_id',DATE_COLUMN]]])
@@ -413,18 +401,6 @@ us_state_to_abbrev = {
 
 inverted_us_state = dict(map(reversed, us_state_to_abbrev.items()))
 
-
-
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2011_us_ag_exports.csv')
-
-for col in df.columns:
-    df[col] = df[col].astype(str)
-
-df['text'] = df['state'] + '<br>' + \
-    'Beef ' + df['beef'] + ' Dairy ' + df['dairy'] + '<br>' + \
-    'Fruits ' + df['total fruits'] + ' Veggies ' + df['total veggies'] + '<br>' + \
-    'Wheat ' + df['wheat'] + ' Corn ' + df['corn']
-
 if choose == 'Twitter':
     flag = True
 else:
@@ -432,12 +408,16 @@ else:
 
 
 if event_selector == 'Insurrection':
-    df_twitter_before_ext = pd.read_csv('./data/after_with_places_ext.csv')
-    df_twitter_after_ext = pd.read_csv('./data/before_with_places_ext.csv')
+    with open('./data/before_with_places_ext.pkl', 'rb') as f:
+        df_twitter_before_ext = pickle.load(f)
+    with open('./data/after_with_places_ext.pkl', 'rb') as f:
+        df_twitter_after_ext = pickle.load(f)
 
 elif event_selector == 'Election Fraud':
-    df_twitter_before_ext = pd.read_csv('./data/after_with_places_ext_election.csv')
-    df_twitter_after_ext = pd.read_csv('./data/before_with_places_ext_election.csv')
+    with open('./data/before_with_places_ext_election.pkl', 'rb') as f:
+        df_twitter_before_ext = pickle.load(f)
+    with open('./data/after_with_places_ext_election.pkl', 'rb') as f:
+        df_twitter_after_ext = pickle.load(f)
 
 if flag:
     df_tw_geo = pd.concat([df_twitter_before_ext[['id','created_at_x','place_type','country','name','full_name']],df_twitter_after_ext[['id','created_at_x','place_type','country','name','full_name']]])
