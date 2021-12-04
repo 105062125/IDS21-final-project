@@ -13,10 +13,10 @@ We visualize three social media platforms: Twitter, Reddit and Facebook.
 
 ### Goals of the project
 This data visualization aims to explore the following:
-1. What is the general emotions and sentiment displayed in the social media data regarding voter fraud before/after the election? 
-2. What is the general emotions and sentiment displayed in the social media data regarding voter fraud before/after the insurrection?
-3. How do the general emotions and sentiment displayed in the social media data differ across states? 
-4. How do the general emotions and sentiment displayed in the social media data differ across social media platforms? 
+1. What is the general trend, emotions and sentiment displayed in the social media data regarding voter fraud before/after the election? 
+2. What is the general trend, emotions and sentiment displayed in the social media data regarding voter fraud before/after the insurrection?
+3. How do the general trend, emotions and sentiment displayed in the social media data differ across states? 
+4. How do the general trend, emotions and sentiment displayed in the social media data differ across social media platforms? 
 
 # Data
 ## Collection Methodology
@@ -44,12 +44,15 @@ After receiving the data, we performed data processing to clean the data in orde
 We removed all items with missing emotions and sentiments from the data. 
 We also removed items with the same repeated texts, eg retweets. 
 We created new columns tagging the prevailing sentiment and emotion of each text by processing sentiment and emotion measures of each text in the dataset and take the emotion or sentiment which is highest in value as the tag.
+As mentioned before we also rehydrate the data for additional information. We then process the rehydrated data so it would be compatible to a known US state map visualization library.
 
 # Approach 
-We will attempt to tell a compelling story about the differences in emotions across the two events, providing a side by side comparison. 
-To give this contrast, we will divide the page into two for the user to discern the change of emotions before and after the events.
-We will present data summaries and general emotion and sentiment summary by histogram and multiple metric views.
-To present data regarding the states, we will use a map to show geography. We will overlay translucent bubbles of different colours to represent the different emotions.
+We will attempt to tell a compelling story about the trends, emotions and sentiments across the two events. Users can switch focus between each event and will be helped by narrations to make sense of differences between the two events, time and social media sources in the whole discourse. 
+To give this contrast, we will divide the page into three main section - An introduction and overview section, one section to see trends in discourse (topic, top posting accounts, geolocation) and one regarding sentiments and emotions for the user to discern the change of emotions from before to after the events.
+Initial design can be seen [here](Design of Interactive Data Science Project.pdf)
+For the overview, we present the general statistics of the data set by way of big number 'metric' chart, accompanied by a line chart to show growth/decline of tweet/post activity around the topic for the observed social medias over the observation window.
+The trends in discourse section will show top terms and top posting accounts through bar chart as a means of rank comparison. We also added an interactive US state map that show the concentration of posts around this topic.
+The emotions section are filled with stacked bar chart to show shares of sentiment and emotion over time, and a bar chart for general comparison. We also used box plot to visualize emotion intensity over time.
 
 # Exploratory Data Analysis
 Before showing the interactive visualization, we did a round of exploratory data analysis to get a sense of the data. The EDA for the election part of the data can be seen [here](Election_EDA.ipynb), meanwhile the EDA for the insurrection part of the data can be seen [here](insurrection_exploration.ipynb)
