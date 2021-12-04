@@ -309,33 +309,34 @@ df_content = df_content[date_mask]
 stopwords = set(STOPWORDS)
 stopwords.update(["https", "t", "co", "let", "will", "s", "use", "take", "used", "people", "said",
             "say", "wasnt", "go", "well", "thing", "amp", "put", "&", "even", "Yet"])
-word_cleaning = ' '.join(text for text in df_content['text'])
+word_cleaning = ' '.join(text for text in df_content['text'].sample(n=5000, replace=True, random_state=1))
 word_cleaning = re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",word_cleaning)
 
-# wordcloud = WordCloud(stopwords=stopwords, max_words=10, width=800, height=400).generate(word_cleaning)
-# topwords_dict = wordcloud.words_
-# color_word = ['#0a010c','#bf974c','#223c84','#b6ba87','#a55340','#3d3726','#d1abb0','#484454', '#5a2d5e','#307026']
-#
-#
-# df_wordchart = {'term': list(topwords_dict.keys()), 'normalized_count': list(topwords_dict.values()), 'color': color_word}
-# df_wordchart = pd.DataFrame(data=df_wordchart)
-#
-# text_bars = alt.Chart(df_wordchart).mark_bar().encode(
-#     x=alt.X('normalized_count', axis=alt.Axis(title='Normalized count')),
-#     y=alt.Y('term', axis=alt.Axis(title='Terms'), sort='-x'),
-#             color=alt.Color('color', scale=None)
-# )
-#
-# text = text_bars.mark_text(
-#     align='left',
-#     baseline='middle',
-#     dx=3  # Nudges text to right so it doesn't appear on top of the bar
-# ).encode(
-#     text='wheat:Q'
-# )
-#
-# time_container.markdown('##### Top terms in posts')
-# time_container.altair_chart(text_bars, use_container_width = True)
+
+wordcloud = WordCloud(stopwords=stopwords, max_words=10, width=800, height=400).generate(word_cleaning)
+topwords_dict = wordcloud.words_
+color_word = ['#0a010c','#bf974c','#223c84','#b6ba87','#a55340','#3d3726','#d1abb0','#484454', '#5a2d5e','#307026']
+
+
+df_wordchart = {'term': list(topwords_dict.keys()), 'normalized_count': list(topwords_dict.values()), 'color': color_word}
+df_wordchart = pd.DataFrame(data=df_wordchart)
+
+text_bars = alt.Chart(df_wordchart).mark_bar().encode(
+    x=alt.X('normalized_count', axis=alt.Axis(title='Normalized count')),
+    y=alt.Y('term', axis=alt.Axis(title='Terms'), sort='-x'),
+            color=alt.Color('color', scale=None)
+)
+
+text = text_bars.mark_text(
+    align='left',
+    baseline='middle',
+    dx=3  # Nudges text to right so it doesn't appear on top of the bar
+).encode(
+    text='wheat:Q'
+)
+
+time_container.markdown('##### Top terms in posts')
+time_container.altair_chart(text_bars, use_container_width = True)
 
 #time_container.markdown('In this section we can see top posting accounts across time periods. Twitter ')
 
