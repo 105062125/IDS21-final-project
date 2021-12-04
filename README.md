@@ -52,5 +52,5 @@ We will present data summaries and general emotion and sentiment summary by hist
 To present data regarding the states, we will use a map to show geography. We will overlay translucent bubbles of different colours to represent the different emotions.
 
 # Exploratory Data Analysis
-Before showing the interactive visualization, we did a round of exploratory data analysis to get a sense of the data. The EDA for the election part of the data can be seen [here](Election_EDA.ipynb), meanwhile the EDA for the insurrection part of the data can be seen [here](insurrection_exploration.ipynb)
+Before showing the interactive visualization, we did a round of exploratory data analysis to get a sense of the data. The EDA for the election part of the data can be seen [here](election_exploration.ipynb), meanwhile the EDA for the insurrection part of the data can be seen [here](insurrection_exploration.ipynb)
 
