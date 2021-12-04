@@ -226,7 +226,12 @@ date_format = 'YYYY-MM-DD'
 
 
 geo_after_df = pd.read_csv('./data/after_with_places_ext.csv')
+
+st.write(geo_after_df)
+
 geo_before_df = pd.read_csv('./data/before_with_places_ext.csv')
+
+st.write(geo_before_df)
 
 st.markdown("""---""")
 time_container = st.container()
