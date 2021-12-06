@@ -57,3 +57,6 @@ The emotions section are filled with stacked bar chart to show shares of sentime
 # Exploratory Data Analysis
 Before showing the interactive visualization, we did a round of exploratory data analysis to get a sense of the data. The EDA for the election part of the data can be seen [here](Election_EDA.ipynb), meanwhile the EDA for the insurrection part of the data can be seen [here](insurrection_exploration.ipynb)
 
+# Team member contributions 
+All team members contributed equally to this project. 
+Lynnette did the initial data collection and processing, Adya did exploratory data analysis for the insurrection and Kevin did exploratory data analysis for the elections. All members contributed to the development of the interactive data dashboard and the recording of the video.
